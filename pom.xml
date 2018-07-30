@@ -22,9 +22,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <util.version>1.0.9</util.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.zhazhapan</groupId>
+            <artifactId>util</artifactId>
+            <version>${util.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
