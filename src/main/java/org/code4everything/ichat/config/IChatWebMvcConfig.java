@@ -1,6 +1,7 @@
 package org.code4everything.ichat.config;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zhazhapan.util.model.ResultObject;
 import org.code4everything.ichat.exception.IChatExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,5 +54,11 @@ public class IChatWebMvcConfig implements WebMvcConfigurer {
     @Scope("prototype")
     public JSONObject jsonObject() {
         return new JSONObject();
+    }
+
+    @Bean
+    @Scope("prototype")
+    public ResultObject resultObject() {
+        return new ResultObject();
     }
 }
