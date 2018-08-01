@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(description = "公共接口")
 public class CommonController {
 
-    private ResultObject resultObject;
-
     private final UserService userService;
 
     private final CommonService commonService;
@@ -44,6 +42,7 @@ public class CommonController {
     @ApiImplicitParams({@ApiImplicitParam(name = "email", value = "邮箱", dataType = "string", required = true),
             @ApiImplicitParam(name = "method", value = "发送方式：1注册，2重置密码，3修改邮箱", dataType = "int", required = true)})
     public ResultObject sendCode(@RequestParam String email, @RequestParam Integer method) {
+        ResultObject resultObject;
         if (Checker.isEmail(email) && Checker.isNotNull(method)) {
             boolean result = true;
             // 注册、重置密码：需验证邮箱是否存在
@@ -51,6 +50,7 @@ public class CommonController {
                 result = !userService.emailExists(email);
             }
             if (result) {
+                // 当邮件不存在或是其他method时才发送验证码
                 result = commonService.sendCode(email, method);
                 resultObject = result ? new ResultObject("邮件发送成功") : CheckResult.getErrorResult(501, "发送邮件失败");
             } else {
