@@ -29,7 +29,7 @@ public class CommonController {
 
     private final CommonService commonService;
 
-    private final Logger LOGGER = Logger.getLogger(CommonController.class);
+    private static final Logger logger = Logger.getLogger(CommonController.class);
 
     @Autowired
     public CommonController(UserService userService, CommonService commonService) {
@@ -51,8 +51,8 @@ public class CommonController {
             }
             if (result) {
                 // 当邮件不存在或是其他method时才发送验证码
-                result = commonService.sendCode(email, method);
-                resultObject = result ? new ResultObject("邮件发送成功") : CheckResult.getErrorResult(501, "发送邮件失败");
+                commonService.sendCode(email, method);
+                resultObject = new ResultObject("邮件发送成功");
             } else {
                 resultObject = CheckResult.getErrorResult("邮箱已经存在");
             }

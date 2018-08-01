@@ -14,5 +14,7 @@ public interface CommonService {
      *
      * @return 是否发送成功
      */
-    boolean sendCode(String email, int method);
+    void sendCode(String email, int method);
+
+    void saveLog(String level, String method, String description, String userId);
 }

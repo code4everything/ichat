@@ -1,5 +1,6 @@
 package org.code4everything.ichat;
 
+import com.zhazhapan.util.ThreadPool;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.web.filter.CorsFilter;
 public class IchatApplication {
 
     public static void main(String[] args) {
+        ThreadPool.init();
         SpringApplication.run(IchatApplication.class, args);
     }
 
