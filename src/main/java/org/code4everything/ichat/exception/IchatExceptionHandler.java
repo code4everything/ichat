@@ -17,7 +17,7 @@ import java.util.Map;
  * @author pantao
  * @since 2018-07-30
  */
-public class IChatExceptionHandler implements HandlerExceptionResolver {
+public class IchatExceptionHandler implements HandlerExceptionResolver {
 
     @Override
     public ModelAndView resolveException(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,

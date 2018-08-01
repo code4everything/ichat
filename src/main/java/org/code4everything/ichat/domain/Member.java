@@ -48,4 +48,9 @@ public class Member {
      * 加入时间
      */
     private Long createTime;
+
+    /**
+     * 是否允许通知
+     */
+    private Boolean notification;
 }

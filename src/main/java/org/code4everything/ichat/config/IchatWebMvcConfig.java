@@ -2,7 +2,7 @@ package org.code4everything.ichat.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zhazhapan.util.model.ResultObject;
-import org.code4everything.ichat.exception.IChatExceptionHandler;
+import org.code4everything.ichat.exception.IchatExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2018-07-30
  */
 @Configuration
-public class IChatWebMvcConfig implements WebMvcConfigurer {
+public class IchatWebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
@@ -42,12 +42,12 @@ public class IChatWebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/assets/");
+        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/static/assets/");
     }
 
     @Bean
-    public IChatExceptionHandler iChatExceptionHandler() {
-        return new IChatExceptionHandler();
+    public IchatExceptionHandler iChatExceptionHandler() {
+        return new IchatExceptionHandler();
     }
 
     @Bean
