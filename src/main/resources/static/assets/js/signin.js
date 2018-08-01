@@ -142,19 +142,6 @@ function submit() {
 
 $(document).ready(
     function () {
-        $("#username").keyup(function () {
-                var username = event.srcElement.value;
-                if (username.match(userConfig.usernameMatch.pattern)) {
-                    $.get("/user/username/exists", {username: username}, function (data) {
-                        var json = JSON.parse(data);
-                        /** @namespace json.exists */
-                        signinItem.description = json.exists ? "用户名已经存在" : "";
-                    });
-                } else {
-                    signinItem.description = userConfig.usernameMatch.description;
-                }
-            }
-        );
         $(".email").keyup(function () {
             var email = event.srcElement.value;
             if (isEmail(email)) {
