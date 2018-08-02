@@ -31,6 +31,12 @@
             <groupId>com.zhazhapan</groupId>
             <artifactId>util</artifactId>
             <version>${util.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>org.ow2.asm</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

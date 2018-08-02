@@ -1,5 +1,6 @@
 package org.code4everything.ichat;
 
+import com.spring4all.swagger.EnableSwagger2Doc;
 import com.zhazhapan.util.ThreadPool;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,9 +14,12 @@ import org.springframework.web.filter.CorsFilter;
  * @since 2018/7/25
  */
 @SpringBootApplication
+@EnableSwagger2Doc
 public class IchatApplication {
 
     public static void main(String[] args) {
+        ThreadPool.setCorePoolSize(10);
+        ThreadPool.setMaximumPoolSize(100);
         ThreadPool.init();
         SpringApplication.run(IchatApplication.class, args);
     }
