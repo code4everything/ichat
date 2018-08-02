@@ -19,4 +19,6 @@ public interface CommonService {
     void saveLog(LogLevel level, String method, String description, String userId);
 
     void saveCode(String key, String code);
+
+    String getByRedisWithoutMongo(String key);
 }

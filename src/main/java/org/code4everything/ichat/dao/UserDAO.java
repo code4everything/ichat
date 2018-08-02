@@ -17,4 +17,16 @@ public interface UserDAO extends MongoRepository<User, String> {
      * @return 个数
      */
     Integer countByEmail(String email);
+
+    /**
+     * 通过邮箱和密码查找用户
+     *
+     * @param email 邮箱
+     * @param password 密码
+     *
+     * @return {@link User}
+     */
+    User findByEmailAndPassword(String email, String password);
+
+
 }

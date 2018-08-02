@@ -70,4 +70,9 @@ public class CommonServiceImpl implements CommonService {
     public void saveCode(String key, String code) {
         redis.opsForValue().set(key, code, ValueConsts.THREE_INT, TimeUnit.MINUTES);
     }
+
+    @Override
+    public String getByRedisWithoutMongo(String key) {
+        return redis.opsForValue().get(key);
+    }
 }

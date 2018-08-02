@@ -1,8 +1,11 @@
 package org.code4everything.ichat.domain;
 
+import cn.hutool.core.util.RandomUtil;
+import com.zhazhapan.util.encryption.JavaEncrypt;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.code4everything.ichat.model.RegisterDTO;
 import org.springframework.data.annotation.Id;
 
 /**
@@ -68,4 +71,22 @@ public class User {
      * 创建时间
      */
     private Long createTime;
+
+    /**
+     * 最近一次登录时间
+     */
+    private Long lastLoginTime;
+
+    public User(RegisterDTO register) {
+        username = register.getUsername();
+        email = register.getEmail();
+        password = JavaEncrypt.MD5.digestHex(register.getPassword());
+        setDefaultValue();
+    }
+
+    private void setDefaultValue() {
+        createTime = System.currentTimeMillis();
+        status = "1";
+        id = RandomUtil.simpleUUID();
+    }
 }

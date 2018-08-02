@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.code4everything.ichat.constant.MessageConsts;
+import org.code4everything.ichat.factory.ResultFactory;
 import org.code4everything.ichat.model.VerifyCodeDTO;
 import org.code4everything.ichat.service.CommonService;
 import org.code4everything.ichat.service.UserService;
@@ -48,26 +49,31 @@ public class CommonController {
     @RequestMapping(value = "/common/code", method = RequestMethod.POST)
     @ApiOperation("发送验证码")
     public ResultObject sendCode(@RequestBody @ApiParam VerifyCodeDTO code) {
-        ResultObject resultObject;
-        if (Checker.isEmail(code.getEmail()) && Checker.isNotNull(code.getMethod())) {
-            boolean result = true;
-            // 注册、重置密码：需验证邮箱是否存在
-            if (code.getMethod() == 1 || code.getMethod() == ValueConsts.THREE_INT) {
-                result = !userService.emailExists(code.getEmail());
-            }
-            if (result) {
-                // 当邮件不存在或是其他 method 时才发送验证码
-                int verifyCode = RandomUtils.getRandomInteger(6);
-                String sessionId = request.getSession().getId();
-                commonService.saveCode(sessionId + "-code", String.valueOf(verifyCode));
-                String codeStr = String.valueOf(code.getMethod() + verifyCode);
-                logger.info(StrUtil.format("send verify code[{}] for " + sessionId, codeStr));
-                resultObject = new ResultObject(MessageConsts.SEND_CODE_SUCCESS);
+        CheckResult checkResult = Checker.checkBean(code);
+        ResultObject resultObject = checkResult.resultObject;
+        if (checkResult.passed) {
+            if (Checker.isEmail(code.getEmail())) {
+                boolean result = true;
+                // 注册、重置密码：需验证邮箱是否存在
+                if (code.getMethod() == 1 || code.getMethod() == ValueConsts.THREE_INT) {
+                    result = !userService.emailExists(code.getEmail());
+                }
+                if (result) {
+                    // 当邮件不存在或是其他 method 时才发送验证码
+                    int verifyCode = RandomUtils.getRandomInteger(6);
+                    String sessionId = request.getSession().getId();
+                    request.getSession().setAttribute("email", code.getEmail());
+                    // 保存原始的验证码
+                    commonService.saveCode(sessionId + "-code", String.valueOf(verifyCode));
+                    String codeStr = String.valueOf(code.getMethod() + verifyCode);
+                    logger.info(StrUtil.format("send verify code[{}] for " + sessionId, codeStr));
+                    resultObject = new ResultObject(MessageConsts.SEND_CODE_SUCCESS);
+                } else {
+                    resultObject = ResultFactory.getEmailExistsResult();
+                }
             } else {
-                resultObject = CheckResult.getErrorResult(MessageConsts.EMAIL_EXISTS);
+                resultObject = ResultFactory.getEmailErrorResult();
             }
-        } else {
-            resultObject = CheckResult.getErrorResult();
         }
         return resultObject;
     }
