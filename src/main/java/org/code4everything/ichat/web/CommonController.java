@@ -2,6 +2,7 @@ package org.code4everything.ichat.web;
 
 import com.zhazhapan.modules.constant.ValueConsts;
 import com.zhazhapan.util.Checker;
+import com.zhazhapan.util.RandomUtils;
 import com.zhazhapan.util.model.CheckResult;
 import com.zhazhapan.util.model.ResultObject;
 import io.swagger.annotations.Api;
@@ -9,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.log4j.Logger;
+import org.code4everything.ichat.constant.MessageConsts;
 import org.code4everything.ichat.service.CommonService;
 import org.code4everything.ichat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author pantao
@@ -29,12 +33,15 @@ public class CommonController {
 
     private final CommonService commonService;
 
+    private final HttpServletRequest request;
+
     private static final Logger logger = Logger.getLogger(CommonController.class);
 
     @Autowired
-    public CommonController(UserService userService, CommonService commonService) {
+    public CommonController(UserService userService, CommonService commonService, HttpServletRequest request) {
         this.userService = userService;
         this.commonService = commonService;
+        this.request = request;
     }
 
     @RequestMapping(value = "/common/code", method = RequestMethod.POST)
@@ -50,11 +57,13 @@ public class CommonController {
                 result = !userService.emailExists(email);
             }
             if (result) {
-                // 当邮件不存在或是其他method时才发送验证码
-                commonService.sendCode(email, method);
-                resultObject = new ResultObject("邮件发送成功");
+                // 当邮件不存在或是其他 method 时才发送验证码
+                String code = String.valueOf(method + RandomUtils.getRandomInteger(6));
+                commonService.saveCode(request.getSession().getId() + ".code", code);
+                commonService.sendCode(email, code);
+                resultObject = new ResultObject(MessageConsts.SEND_CODE_SUCCESS);
             } else {
-                resultObject = CheckResult.getErrorResult("邮箱已经存在");
+                resultObject = CheckResult.getErrorResult(MessageConsts.EMAIL_EXISTS);
             }
         } else {
             resultObject = CheckResult.getErrorResult();
