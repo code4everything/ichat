@@ -66,6 +66,8 @@ public class CommonController {
                     // 保存原始的验证码
                     commonService.saveCode(sessionId + "-code", String.valueOf(verifyCode));
                     String codeStr = String.valueOf(code.getMethod() + verifyCode);
+                    // 开发阶段暂不开启邮件发送功能
+                    // commonService.sendCode(code.getEmail(), codeStr);
                     logger.info(StrUtil.format("send verify code[{}] for " + sessionId, codeStr));
                     resultObject = new ResultObject(MessageConsts.SEND_CODE_SUCCESS);
                 } else {

@@ -27,6 +27,4 @@ public interface UserDAO extends MongoRepository<User, String> {
      * @return {@link User}
      */
     User findByEmailAndPassword(String email, String password);
-
-
 }
