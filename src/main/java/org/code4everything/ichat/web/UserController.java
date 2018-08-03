@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.constant.MessageConsts;
 import org.code4everything.ichat.domain.User;
 import org.code4everything.ichat.factory.ResultFactory;
@@ -78,7 +79,18 @@ public class UserController {
     @ApiOperation("修改头像")
     @ApiImplicitParam(name = "avatar", value = "头像", dataTypeClass = MultipartFile.class, required = true)
     public ResultObject avatar(@RequestParam MultipartFile avatar) {
-        return new ResultObject();
+        ResultObject resultObject = new ResultObject();
+        User user = (User) request.getSession().getAttribute(ValueConsts.USER_STRING);
+        String url = userService.uploadAvatar(user.getId(), avatar);
+        if (url.startsWith(IchatValueConsts.AVATAR_MAPPING)) {
+            resultObject.data = url;
+            user.setAvatar(url);
+            request.setAttribute(ValueConsts.USER_STRING, user);
+        } else {
+            resultObject.code = 407;
+            resultObject.message = url;
+        }
+        return resultObject;
     }
 
     @RequestMapping(value = "/user/info", method = RequestMethod.GET)

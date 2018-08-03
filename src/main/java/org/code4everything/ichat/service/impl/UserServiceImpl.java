@@ -53,8 +53,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String uploadAvatar(String userId, MultipartFile avatar) {
-        if (avatar.getSize() > ValueConsts.MB) {
-            return null;
+        if (Checker.isNull(avatar) || avatar.getSize() > ValueConsts.MB) {
+            return "头像大小不能超过1MB";
         }
         String local = Checker.checkNull(commonService.getString(ConfigConsts.FILE_STORAGE_PATH),
                 DefaultConfigValueConsts.FILE_STORAGE_PATH);
@@ -65,13 +65,19 @@ public class UserServiceImpl implements UserService {
             logger.error(e.getMessage());
             String msg = "get md5 from avatar error: " + e.getMessage();
             commonService.saveLog(LogLevel.ERROR, CLASS_NAME + "#uploadAvatar", msg, userId);
-            return null;
+            return "内部错误：获取文件MD5码失败";
         }
         String suffix = FileExecutor.getFileSuffix(Objects.requireNonNull(avatar.getOriginalFilename()));
         String filename = md5 + ValueConsts.DOT_SIGN + suffix;
         local += (local.endsWith(File.separator) ? "" : File.separator) + filename;
         String url = IchatValueConsts.AVATAR_MAPPING + filename;
-        return commonService.saveDocument(local, url, avatar, userId);
+        url = commonService.saveDocument(local, url, avatar, userId);
+        if (url.startsWith(IchatValueConsts.AVATAR_MAPPING)) {
+            Query query = new Query(Criteria.where("id").is(userId));
+            Update update = new Update().set("avatar", url);
+            mongoTemplate.updateFirst(query, update, User.class);
+        }
+        return url;
     }
 
     @Override

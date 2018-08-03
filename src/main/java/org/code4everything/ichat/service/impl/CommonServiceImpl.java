@@ -64,7 +64,7 @@ public class CommonServiceImpl implements CommonService {
             documentDAO.save(new Document(RandomUtil.simpleUUID(), local, url, System.currentTimeMillis()));
             return url;
         }
-        return null;
+        return "内部错误：写入头像文件失败";
     }
 
     @Override
