@@ -6,22 +6,18 @@ import com.zhazhapan.util.Formatter;
 import com.zhazhapan.util.model.CheckResult;
 import com.zhazhapan.util.model.ResultObject;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.code4everything.ichat.constant.MessageConsts;
 import org.code4everything.ichat.domain.User;
 import org.code4everything.ichat.factory.ResultFactory;
-import org.code4everything.ichat.model.LoginDTO;
-import org.code4everything.ichat.model.PasswordResetDTO;
-import org.code4everything.ichat.model.RegisterDTO;
-import org.code4everything.ichat.model.UserVO;
+import org.code4everything.ichat.model.*;
 import org.code4everything.ichat.service.CommonService;
 import org.code4everything.ichat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,6 +42,53 @@ public class UserController {
         this.commonService = commonService;
     }
 
+    @RequestMapping(value = "/user/info", method = RequestMethod.PUT)
+    @ApiOperation("更新用户基本信息")
+    public ResultObject updateBasicInfo(@RequestBody @ApiParam BasicUserDTO userInfo) {
+        CheckResult result = Checker.checkBean(userInfo);
+        ResultObject resultObject = result.resultObject;
+        if (result.passed) {
+            User user = (User) request.getSession().getAttribute(ValueConsts.USER_STRING);
+            String id = user.getId();
+            userService.updateUserInfo(id, userInfo);
+            request.getSession().setAttribute(ValueConsts.USER_STRING, user.setUserInfo(userInfo));
+            resultObject.message = "更新用户基本信息成功";
+        }
+        return resultObject;
+    }
+
+    @RequestMapping(value = "/user/password", method = RequestMethod.PUT)
+    @ApiOperation("更新密码")
+    public ResultObject updatePassword(@RequestBody @ApiParam PasswordUpdateDTO password) {
+        CheckResult result = Checker.checkBean(password);
+        ResultObject resultObject = result.resultObject;
+        if (result.passed) {
+            User user = (User) request.getSession().getAttribute(ValueConsts.USER_STRING);
+            if (Checker.isNull(userService.login(user.getEmail(), password.getPassword()))) {
+                resultObject = new ResultObject(403, "密码不正确");
+            } else {
+                userService.updatePassword(user.getId(), password.getNewPassword());
+                resultObject.message = "修改密码成功";
+            }
+        }
+        return resultObject;
+    }
+
+    @RequestMapping(value = "/user/avatar", method = RequestMethod.PUT)
+    @ApiOperation("修改头像")
+    @ApiImplicitParam(name = "avatar", value = "头像", dataTypeClass = MultipartFile.class, required = true)
+    public ResultObject avatar(@RequestParam MultipartFile avatar) {
+        return new ResultObject();
+    }
+
+    @RequestMapping(value = "/user/info", method = RequestMethod.GET)
+    @ApiOperation("获取用户基本信息")
+    public ResultObject getUserInfo() {
+        ResultObject resultObject = new ResultObject();
+        resultObject.data = new UserVO((User) request.getSession().getAttribute(ValueConsts.USER_STRING));
+        return resultObject;
+    }
+
     @RequestMapping(value = "/password/reset", method = RequestMethod.PUT)
     @ApiOperation("重置密码")
     public ResultObject resetPassword(@RequestBody @ApiParam PasswordResetDTO password) {
@@ -58,7 +101,7 @@ public class UserController {
                 if (exists) {
                     String codeKey = request.getSession().getId() + "-code";
                     // 获取原始的验证码
-                    int code = Formatter.stringToInt(commonService.getByRedisWithoutMongo(codeKey));
+                    int code = Formatter.stringToInt(commonService.getString(codeKey));
                     if (code < 0) {
                         resultObject = ResultFactory.getCodeExpiredResult();
                     } else if (code - ValueConsts.TWO_INT == password.getCode()) {
@@ -89,7 +132,7 @@ public class UserController {
                 if (consistent) {
                     String codeKey = request.getSession().getId() + "-code";
                     // 获取原始的验证码
-                    int code = Formatter.stringToInt(commonService.getByRedisWithoutMongo(codeKey));
+                    int code = Formatter.stringToInt(commonService.getString(codeKey));
                     if (code < 0) {
                         resultObject = ResultFactory.getCodeExpiredResult();
                     } else if (code - ValueConsts.ONE_INT == register.getCode()) {

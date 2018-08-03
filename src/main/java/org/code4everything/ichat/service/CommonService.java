@@ -1,12 +1,17 @@
 package org.code4everything.ichat.service;
 
 import com.zhazhapan.util.enums.LogLevel;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author pantao
  * @since 2018-08-01
  */
 public interface CommonService {
+
+    String saveDocument(String local, String url, MultipartFile avatar, String userId);
+
+    boolean saveFile(String filename, MultipartFile file, String userId);
 
     /**
      * 发送验证码
@@ -20,5 +25,5 @@ public interface CommonService {
 
     void saveCode(String key, String code);
 
-    String getByRedisWithoutMongo(String key);
+    String getString(String key);
 }

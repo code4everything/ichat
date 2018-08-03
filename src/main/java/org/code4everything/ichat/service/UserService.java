@@ -1,12 +1,20 @@
 package org.code4everything.ichat.service;
 
 import org.code4everything.ichat.domain.User;
+import org.code4everything.ichat.model.BasicUserDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author pantao
  * @since 2018-08-01
  */
 public interface UserService {
+
+    String uploadAvatar(String userId, MultipartFile avatar);
+
+    void updatePassword(String id, String password);
+
+    void updateUserInfo(String id, BasicUserDTO userInfo);
 
     /**
      * 验证邮箱是否存在

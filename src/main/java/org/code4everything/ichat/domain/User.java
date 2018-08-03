@@ -5,6 +5,7 @@ import com.zhazhapan.util.encryption.JavaEncrypt;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.code4everything.ichat.model.BasicUserDTO;
 import org.code4everything.ichat.model.RegisterDTO;
 import org.springframework.data.annotation.Id;
 
@@ -82,6 +83,14 @@ public class User {
         email = register.getEmail();
         password = JavaEncrypt.MD5.digestHex(register.getPassword());
         setDefaultValue();
+    }
+
+    public User setUserInfo(BasicUserDTO userInfo) {
+        username = userInfo.getUsername();
+        gender = userInfo.getGender();
+        bio = userInfo.getBio();
+        birth = userInfo.getBirth();
+        return this;
     }
 
     private void setDefaultValue() {

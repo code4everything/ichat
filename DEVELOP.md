@@ -32,4 +32,7 @@
 
     ```
     /common/**
+    /login
+    /register
+    /password/reset
     ```

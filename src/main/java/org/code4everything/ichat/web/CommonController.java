@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServletRequest;
  * @since 2018-08-01
  */
 @RestController
-@Api(description = "公共接口")
+@RequestMapping("/common")
+@Api(value = "/common", description = "公共接口")
 public class CommonController {
 
     private final UserService userService;
@@ -46,7 +47,7 @@ public class CommonController {
         this.request = request;
     }
 
-    @RequestMapping(value = "/common/code", method = RequestMethod.POST)
+    @RequestMapping(value = "/code", method = RequestMethod.POST)
     @ApiOperation("发送验证码")
     public ResultObject sendCode(@RequestBody @ApiParam VerifyCodeDTO code) {
         CheckResult checkResult = Checker.checkBean(code);

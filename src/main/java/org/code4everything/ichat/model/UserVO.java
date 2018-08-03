@@ -14,40 +14,21 @@ import org.code4everything.ichat.domain.User;
 @AllArgsConstructor
 public class UserVO {
 
-    /**
-     * 用户名
-     */
     private String username;
 
-    /**
-     * 性别
-     */
     private String gender;
 
-    /**
-     * 手机号
-     */
     private String phone;
 
-    /**
-     * 邮箱
-     */
     private String email;
 
-    /**
-     * 头像
-     */
     private String avatar;
 
-    /**
-     * 出生日期
-     */
     private Long birth;
 
-    /**
-     * 个人简介
-     */
     private String bio;
+
+    private Long lastLoginTime;
 
     public UserVO(User user) {
         username = user.getUsername();
@@ -57,5 +38,6 @@ public class UserVO {
         avatar = user.getAvatar();
         birth = user.getBirth();
         bio = user.getBio();
+        lastLoginTime = user.getLastLoginTime();
     }
 }
