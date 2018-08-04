@@ -5,6 +5,7 @@ WeChat/QQ 聊天记录被监控？ Gitter 访问速度太慢？ Telegram 被XX�
 #### 环境配置
 
 Java: JDK 1.8+
+
 NoSQL: MongoDB and Redis
 
 #### 框架说明
@@ -12,15 +13,21 @@ NoSQL: MongoDB and Redis
 ###### 后端
 
 SpringBoot: 快速开发框架
+
 Spring: Service层开发
+
 SpringMVC: Controller层开发
+
 Shiro: 权限控制
+
 Netty: WebSocket通信
 
 ###### 前端
 
 JQuery: DOM操作
+
 Vue: 数据绑定
+
 Bootstrap: 栅格系统
 
 #### 软件架构
