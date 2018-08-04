@@ -83,10 +83,12 @@ public class UserController {
         User user = (User) request.getSession().getAttribute(ValueConsts.USER_STRING);
         String url = userService.uploadAvatar(user.getId(), avatar);
         if (url.startsWith(IchatValueConsts.AVATAR_MAPPING)) {
+            // 更新头像成功
             resultObject.data = url;
             user.setAvatar(url);
             request.setAttribute(ValueConsts.USER_STRING, user);
         } else {
+            // 上传头像失败
             resultObject.code = 407;
             resultObject.message = url;
         }
