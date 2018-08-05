@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "userInfo")
+@ApiModel(value = "UserInfo", description = "更新用户基本信息")
 public class BasicUserDTO {
 
     @FieldChecking

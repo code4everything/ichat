@@ -73,6 +73,7 @@ public class UserServiceImpl implements UserService {
         String url = IchatValueConsts.AVATAR_MAPPING + filename;
         url = commonService.saveDocument(local, url, avatar, userId);
         if (url.startsWith(IchatValueConsts.AVATAR_MAPPING)) {
+            // 头像上传成功
             Query query = new Query(Criteria.where("id").is(userId));
             Update update = new Update().set("avatar", url);
             mongoTemplate.updateFirst(query, update, User.class);

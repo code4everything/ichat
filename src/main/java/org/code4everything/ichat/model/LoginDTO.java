@@ -10,14 +10,14 @@ import lombok.Data;
  * @since 2018-08-02
  */
 @Data
-@ApiModel(value = "login", description = "登录")
+@ApiModel(value = "Login", description = "登录")
 public class LoginDTO {
 
     @FieldChecking
     @ApiModelProperty(value = "邮箱", required = true)
     private String email;
 
-    @FieldChecking(message = "密码长度为6至20位字符", expression = "val!=null&&val.length()>5&&val.length()<21")
+    @FieldChecking(message = "password length must between 6 and 20", expression = "val.length()>5&&val.length()<21")
     @ApiModelProperty(value = "密码", required = true)
     private String password;
 }

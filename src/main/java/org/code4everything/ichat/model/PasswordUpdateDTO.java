@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("更新密码")
+@ApiModel(value = "PasswordUpdate", description = "更新密码")
 public class PasswordUpdateDTO {
 
     @ApiModelProperty(value = "原密码", required = true)
@@ -22,6 +22,6 @@ public class PasswordUpdateDTO {
     private String password;
 
     @ApiModelProperty(value = "新密码", required = true)
-    @FieldChecking(message = "密码长度为6至20位字符", expression = "val!=null&&val.length()>5&&val.length()<21")
+    @FieldChecking(message = "password length must between 6 and 20", expression = "val.length()>5&&val.length()<21")
     private String newPassword;
 }
