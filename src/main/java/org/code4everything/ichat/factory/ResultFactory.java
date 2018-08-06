@@ -23,6 +23,12 @@ public class ResultFactory {
 
     private static ResultObject codeErrorResult = CheckResult.getErrorResult(406, MessageConsts.CODE_ERROR);
 
+    private static ResultObject unauthorizedResult = CheckResult.getErrorResult(409, MessageConsts.PLEASE_LOGIN);
+
+    public static ResultObject getUnauthorizedResult() {
+        return unauthorizedResult;
+    }
+
     public static ResultObject getCodeErrorResult() {
         return codeErrorResult;
     }

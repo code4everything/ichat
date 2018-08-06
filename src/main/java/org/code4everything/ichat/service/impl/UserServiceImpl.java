@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updatePassword(String id, String password) {
         Query query = new Query(Criteria.where("id").is(id));
-        Update update = new Update().set("password", JavaEncrypt.MD5.digest(password));
+        Update update = new Update().set("password", JavaEncrypt.MD5.digestHex(password));
         mongoTemplate.updateFirst(query, update, User.class);
     }
 
@@ -117,14 +117,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User login(String email, String password) {
-        return userDAO.findByEmailAndPassword(email, JavaEncrypt.MD5.digestHex(password));
+        User user = userDAO.findByEmailAndPassword(email, JavaEncrypt.MD5.digestHex(password));
+        if (Checker.isNotNull(user)) {
+            Query query = new Query(Criteria.where("id").is(user.getId()));
+            Update update = new Update();
+            update.set("lastLoginTime", System.currentTimeMillis());
+            mongoTemplate.updateFirst(query, update, User.class);
+        }
+        return user;
     }
 
     @Override
     public void resetPassword(String email, String password) {
         Query query = new Query(Criteria.where("email").is(email));
         Update update = new Update();
-        update.set("password", JavaEncrypt.MD5.digest(password));
+        update.set("password", JavaEncrypt.MD5.digestHex(password));
         mongoTemplate.updateFirst(query, update, User.class);
     }
 }

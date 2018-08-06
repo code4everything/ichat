@@ -118,9 +118,10 @@ public class UserController {
                     int code = Formatter.stringToInt(commonService.getString(codeKey));
                     if (code < 0) {
                         resultObject = ResultFactory.getCodeExpiredResult();
-                    } else if (code - ValueConsts.TWO_INT == password.getCode()) {
+                    } else if (code + ValueConsts.TWO_INT == password.getCode()) {
                         // 重置密码
                         userService.resetPassword(password.getEmail(), password.getPassword());
+                        resultObject.message = "重置密码成功";
                     } else {
                         resultObject = ResultFactory.getCodeErrorResult();
                     }
@@ -149,7 +150,7 @@ public class UserController {
                     int code = Formatter.stringToInt(commonService.getString(codeKey));
                     if (code < 0) {
                         resultObject = ResultFactory.getCodeExpiredResult();
-                    } else if (code - ValueConsts.ONE_INT == register.getCode()) {
+                    } else if (code + ValueConsts.ONE_INT == register.getCode()) {
                         // 保存用户信息
                         boolean emailExists = userService.emailExists(register.getEmail());
                         if (!emailExists) {
@@ -182,6 +183,7 @@ public class UserController {
                     // 登录成功
                     request.getSession().setAttribute(ValueConsts.USER_STRING, user);
                     resultObject.data = new UserVO(user);
+                    resultObject.message = "登录成功";
                 }
             } else {
                 resultObject = ResultFactory.getEmailErrorResult();
