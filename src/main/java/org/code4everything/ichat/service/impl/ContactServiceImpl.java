@@ -1,15 +1,11 @@
 package org.code4everything.ichat.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
-import com.zhazhapan.util.Checker;
 import org.code4everything.ichat.dao.ContactDAO;
 import org.code4everything.ichat.domain.Contact;
 import org.code4everything.ichat.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 /**
@@ -43,21 +39,12 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public void save(String inviter, String invitee) {
-        Contact contact = contactDAO.findByInviterAndInviteeAndStatus(inviter, invitee, "0");
-        if (Checker.isNull(contact)) {
-            contact = contactDAO.findByInviterAndInviteeAndStatus(invitee, inviter, "0");
-        }
-        if (Checker.isNull(contact)) {
-            contact = new Contact();
-            contact.setCreateTime(System.currentTimeMillis());
-            contact.setId(RandomUtil.simpleUUID());
-            contact.setInvitee(invitee);
-            contact.setInviter(inviter);
-            contact.setStatus("1");
-            contactDAO.save(contact);
-        } else {
-            Query query = new Query(Criteria.where("id").is(contact.getId()));
-            mongoTemplate.updateFirst(query, new Update().set("status", "1"), Contact.class);
-        }
+        Contact contact = new Contact();
+        contact.setCreateTime(System.currentTimeMillis());
+        contact.setId(RandomUtil.simpleUUID());
+        contact.setInvitee(invitee);
+        contact.setInviter(inviter);
+        contact.setStatus("1");
+        contactDAO.save(contact);
     }
 }
