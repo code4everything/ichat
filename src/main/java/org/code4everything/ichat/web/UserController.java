@@ -43,6 +43,13 @@ public class UserController {
         this.commonService = commonService;
     }
 
+    @RequestMapping(value = "/user/search", method = RequestMethod.GET)
+    @ApiOperation("通过用户名、手机号、邮箱搜索")
+    @ApiImplicitParam(name = "word", value = "关键字", dataType = "string", required = true)
+    public ResultObject search(@RequestParam String word) {
+        return new ResultObject(userService.listUserBySearch(word));
+    }
+
     @RequestMapping(value = "/user/info", method = RequestMethod.PUT)
     @ApiOperation("更新用户基本信息")
     public ResultObject updateBasicInfo(@RequestBody @ApiParam BasicUserDTO userInfo) {

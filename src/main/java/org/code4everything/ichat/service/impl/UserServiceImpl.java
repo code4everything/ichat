@@ -12,6 +12,7 @@ import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.dao.UserDAO;
 import org.code4everything.ichat.domain.User;
 import org.code4everything.ichat.model.BasicUserDTO;
+import org.code4everything.ichat.model.SimpleUserVO;
 import org.code4everything.ichat.service.CommonService;
 import org.code4everything.ichat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * @author pantao
@@ -49,6 +52,15 @@ public class UserServiceImpl implements UserService {
         this.userDAO = userDAO;
         this.mongoTemplate = mongoTemplate;
         this.commonService = commonService;
+    }
+
+    @Override
+    public List<SimpleUserVO> listUserBySearch(String word) {
+        Criteria criteria = Criteria.where("username").regex(Pattern.compile(word, Pattern.CASE_INSENSITIVE));
+        criteria.orOperator(Criteria.where("email").is(word));
+        criteria.orOperator(Criteria.where("phone").is(word));
+        Query query = new Query(criteria);
+        return mongoTemplate.find(query, SimpleUserVO.class);
     }
 
     @Override

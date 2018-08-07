@@ -2,13 +2,18 @@ package org.code4everything.ichat.service;
 
 import org.code4everything.ichat.domain.User;
 import org.code4everything.ichat.model.BasicUserDTO;
+import org.code4everything.ichat.model.SimpleUserVO;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * @author pantao
  * @since 2018-08-01
  */
 public interface UserService {
+
+    List<SimpleUserVO> listUserBySearch(String word);
 
     String uploadAvatar(String userId, MultipartFile avatar);
 

@@ -78,6 +78,11 @@ public class User {
      */
     private Long lastLoginTime;
 
+    /**
+     * 唯一标识符
+     */
+    private String uid;
+
     public User(RegisterDTO register) {
         username = register.getUsername();
         email = register.getEmail();
@@ -97,5 +102,6 @@ public class User {
         createTime = System.currentTimeMillis();
         status = "1";
         id = RandomUtil.simpleUUID();
+        uid = JavaEncrypt.MD5.digestHex(email + String.valueOf(createTime));
     }
 }
