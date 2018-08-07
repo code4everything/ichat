@@ -6,12 +6,15 @@ import org.code4everything.ichat.model.SimpleUserVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author pantao
  * @since 2018-08-01
  */
 public interface UserService {
+
+    String getUserIdByUid(String uid);
 
     List<SimpleUserVO> listUserBySearch(String word);
 
@@ -32,7 +35,11 @@ public interface UserService {
 
     void saveUser(User user);
 
+    boolean isPasswordCorrect(String id, String password);
+
     User login(String email, String password);
+
+    Optional<User> getById(String id);
 
     void resetPassword(String email, String password);
 }

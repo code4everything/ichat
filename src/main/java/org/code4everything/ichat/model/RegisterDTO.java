@@ -25,7 +25,7 @@ public class RegisterDTO {
     @ApiModelProperty(value = "验证码", required = true)
     private Integer code;
 
-    @FieldChecking(message = "password length must between 6 and 20", expression = "val!=null&&val.length()>5&&val.length()<21")
+    @FieldChecking(message = "oldPassword length must between 6 and 20", expression = "val!=null&&val.length()>5&&val.length()<21")
     @ApiModelProperty(value = "密码", required = true)
     private String password;
 }

@@ -1,5 +1,6 @@
 package org.code4everything.ichat.model;
 
+import com.zhazhapan.util.Checker;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,13 +32,15 @@ public class UserVO {
     private Long lastLoginTime;
 
     public UserVO(User user) {
-        username = user.getUsername();
-        gender = user.getGender();
-        phone = user.getPhone();
-        email = user.getEmail();
-        avatar = user.getAvatar();
-        birth = user.getBirth();
-        bio = user.getBio();
-        lastLoginTime = user.getLastLoginTime();
+        if (Checker.isNotNull(user)) {
+            username = user.getUsername();
+            gender = user.getGender();
+            phone = user.getPhone();
+            email = user.getEmail();
+            avatar = user.getAvatar();
+            birth = user.getBirth();
+            bio = user.getBio();
+            lastLoginTime = user.getLastLoginTime();
+        }
     }
 }

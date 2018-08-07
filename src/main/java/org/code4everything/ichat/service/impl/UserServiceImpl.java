@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -52,6 +53,12 @@ public class UserServiceImpl implements UserService {
         this.userDAO = userDAO;
         this.mongoTemplate = mongoTemplate;
         this.commonService = commonService;
+    }
+
+    @Override
+    public String getUserIdByUid(String uid) {
+        User user = userDAO.findByUid(uid);
+        return Checker.isNull(user) ? null : user.getId();
     }
 
     @Override
@@ -96,7 +103,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updatePassword(String id, String password) {
         Query query = new Query(Criteria.where("id").is(id));
-        Update update = new Update().set("password", JavaEncrypt.MD5.digestHex(password));
+        Update update = new Update().set("oldPassword", JavaEncrypt.MD5.digestHex(password));
         mongoTemplate.updateFirst(query, update, User.class);
     }
 
@@ -128,6 +135,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isPasswordCorrect(String id, String password) {
+        return userDAO.existsByIdAndPassword(id, JavaEncrypt.MD5.digestHex(password));
+    }
+
+    @Override
     public User login(String email, String password) {
         User user = userDAO.findByEmailAndPassword(email, JavaEncrypt.MD5.digestHex(password));
         if (Checker.isNotNull(user)) {
@@ -140,10 +152,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> getById(String id) {
+        return userDAO.findById(id);
+    }
+
+    @Override
     public void resetPassword(String email, String password) {
         Query query = new Query(Criteria.where("email").is(email));
         Update update = new Update();
-        update.set("password", JavaEncrypt.MD5.digestHex(password));
+        update.set("oldPassword", JavaEncrypt.MD5.digestHex(password));
         mongoTemplate.updateFirst(query, update, User.class);
     }
 }

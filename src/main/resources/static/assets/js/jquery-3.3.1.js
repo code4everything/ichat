@@ -8809,7 +8809,7 @@
 		data: null,
 		dataType: null,
 		username: null,
-		password: null,
+		oldPassword: null,
 		cache: null,
 		throws: false,
 		traditional: false,

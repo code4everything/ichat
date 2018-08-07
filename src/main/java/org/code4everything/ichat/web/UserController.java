@@ -56,10 +56,8 @@ public class UserController {
         CheckResult result = Checker.checkBean(userInfo);
         ResultObject resultObject = result.resultObject;
         if (result.passed) {
-            User user = (User) request.getSession().getAttribute(ValueConsts.USER_STRING);
-            String id = user.getId();
+            String id = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
             userService.updateUserInfo(id, userInfo);
-            request.getSession().setAttribute(ValueConsts.USER_STRING, user.setUserInfo(userInfo));
             resultObject.message = "更新用户基本信息成功";
         }
         return resultObject;
@@ -71,12 +69,12 @@ public class UserController {
         CheckResult result = Checker.checkBean(password);
         ResultObject resultObject = result.resultObject;
         if (result.passed) {
-            User user = (User) request.getSession().getAttribute(ValueConsts.USER_STRING);
-            if (Checker.isNull(userService.login(user.getEmail(), password.getPassword()))) {
-                resultObject = new ResultObject(403, "密码不正确");
-            } else {
-                userService.updatePassword(user.getId(), password.getNewPassword());
+            String id = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+            if (userService.isPasswordCorrect(id, password.getOldPassword())) {
+                userService.updatePassword(id, password.getNewPassword());
                 resultObject.message = "修改密码成功";
+            } else {
+                resultObject = new ResultObject(403, "密码不正确");
             }
         }
         return resultObject;
@@ -87,13 +85,11 @@ public class UserController {
     @ApiImplicitParam(name = "avatar", value = "头像", dataTypeClass = MultipartFile.class, required = true)
     public ResultObject avatar(@RequestParam MultipartFile avatar) {
         ResultObject resultObject = new ResultObject();
-        User user = (User) request.getSession().getAttribute(ValueConsts.USER_STRING);
-        String url = userService.uploadAvatar(user.getId(), avatar);
+        String id = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        String url = userService.uploadAvatar(id, avatar);
         if (url.startsWith(IchatValueConsts.AVATAR_MAPPING)) {
             // 更新头像成功
             resultObject.data = url;
-            user.setAvatar(url);
-            request.setAttribute(ValueConsts.USER_STRING, user);
         } else {
             // 上传头像失败
             resultObject.code = 407;
@@ -106,7 +102,8 @@ public class UserController {
     @ApiOperation("获取用户基本信息")
     public ResultObject getUserInfo() {
         ResultObject resultObject = new ResultObject();
-        resultObject.data = new UserVO((User) request.getSession().getAttribute(ValueConsts.USER_STRING));
+        String id = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        resultObject.data = new UserVO(userService.getById(id).get());
         return resultObject;
     }
 
@@ -188,7 +185,7 @@ public class UserController {
                     resultObject = ResultFactory.getLoginErrorResult();
                 } else {
                     // 登录成功
-                    request.getSession().setAttribute(ValueConsts.USER_STRING, user);
+                    request.getSession().setAttribute(IchatValueConsts.ID_STR, user.getId());
                     resultObject.data = new UserVO(user);
                     resultObject.message = "登录成功";
                 }

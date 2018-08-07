@@ -36,5 +36,5 @@
     /common/**
     /login
     /register
-    /password/reset
+    /oldPassword/reset
     ```

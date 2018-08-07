@@ -16,13 +16,13 @@ var signinItem = new Vue({
 function reset() {
     var email = $("#res-email").val();
     var code = $("#res-email-verify").val();
-    var password = $("#res-password").val();
-    var passwordConfirm = $("#res-confirm-password").val();
+    var password = $("#res-oldPassword").val();
+    var passwordConfirm = $("#res-confirm-oldPassword").val();
     var isValid = isEmail(email) && 6 === code.length && checkPassword(password, passwordConfirm);
     if (submit() && isValid) {
         layer.load(1);
         $.ajax({
-            url: "/user/password/reset",
+            url: "/user/oldPassword/reset",
             type: "PUT",
             data: {email: email, code: code, password: password},
             success: function (data) {
@@ -47,8 +47,8 @@ function register() {
         var username = $("#username").val();
         var email = $("#email").val();
         var verifyCode = $("#email-verify-code").val();
-        var password = $("#reg-password").val();
-        var passwordConfirm = $("#confirm-password").val();
+        var password = $("#reg-oldPassword").val();
+        var passwordConfirm = $("#confirm-oldPassword").val();
         var canRegister = username.match(userConfig.usernameMatch.pattern) && (!userConfig.emailVerify || 6 === verifyCode.length) && isEmail(email) && checkPassword(password, passwordConfirm);
         if (submit() && canRegister) {
             layer.load(1);
@@ -79,7 +79,7 @@ function login() {
     /** @namespace globalConfig.allowLogin */
     if (globalConfig.allowLogin) {
         var username = $("#loginName").val();
-        var password = $("#password").val();
+        var password = $("#oldPassword").val();
         var remember = document.getElementById("remember").checked;
         if (username && password) {
             layer.load(1);
@@ -156,7 +156,7 @@ $(document).ready(
                 signinItem.emailErrorTip = "邮箱格式不正确";
             }
         });
-        $(".password").keyup(function () {
+        $(".oldPassword").keyup(function () {
             var len = event.srcElement.value.length;
             if (len >= userConfig.password.minLength && len <= userConfig.password.maxLength) {
                 signinItem.passwordVerify = "";
@@ -164,9 +164,9 @@ $(document).ready(
                 signinItem.passwordVerify = "密码长度限定为" + userConfig.password.minLength + "至" + userConfig.password.maxLength + "位";
             }
         });
-        $(".confirm-password").keyup(function () {
+        $(".confirm-oldPassword").keyup(function () {
             var ele = event.srcElement;
-            signinItem.passwordConfirm = (ele.value === $(ele).siblings(".password").val()) ? "" : "两次输入的密码不一样";
+            signinItem.passwordConfirm = (ele.value === $(ele).siblings(".oldPassword").val()) ? "" : "两次输入的密码不一样";
         });
         $(".sendVerifyCode").click(function () {
             var eventSrc = event.srcElement;
