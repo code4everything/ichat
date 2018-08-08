@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 /**
- * 私人消息
+ * 群组消息
  *
  * @author pantao
  * @since 2018-07-31
@@ -14,7 +14,7 @@ import org.springframework.data.annotation.Id;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Private {
+public class GroupMessage {
 
     @Id
     private String id;
@@ -25,7 +25,7 @@ public class Private {
     private String from;
 
     /**
-     * 接收者（用户编号）
+     * 接收者（群组编号）
      */
     private String to;
 
@@ -47,5 +47,5 @@ public class Private {
     /**
      * 回复的消息编号
      */
-    private String reply;
+    private String repliedId;
 }

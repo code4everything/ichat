@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2018-08-02
  */
 @Data
-@ApiModel(value = "Login", description = "登录")
+@ApiModel(value = "LoginLog", description = "登录")
 public class LoginDTO {
 
     @FieldChecking

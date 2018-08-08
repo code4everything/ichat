@@ -14,7 +14,7 @@ import org.springframework.data.annotation.Id;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Login {
+public class LoginLog {
 
     @Id
     private String id;
@@ -30,9 +30,9 @@ public class Login {
     private Long time;
 
     /**
-     * 登陆IP，存储二进制数据
+     * 登陆IP
      */
-    private String ip;
+    private Long ip;
 
     /**
      * 登陆地址

@@ -14,7 +14,7 @@ import org.springframework.data.annotation.Id;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class GroupMember {
 
     @Id
     private String id;

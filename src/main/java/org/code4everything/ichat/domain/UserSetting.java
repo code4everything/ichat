@@ -14,7 +14,7 @@ import org.springframework.data.annotation.Id;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Setting {
+public class UserSetting {
 
     @Id
     private String id;

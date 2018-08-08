@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/user/contact")
-@Api("联系人相关操作")
+@Api(value = "/user/contact ", description = "联系人相关操作")
 public class ContactController {
 
     private final ContactService contactService;

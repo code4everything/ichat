@@ -6,38 +6,26 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 /**
- * 文件
- *
  * @author pantao
- * @since 2018-08-03
+ * @since 2018-08-08
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Document {
+public class UserBlackList {
 
     @Id
     private String id;
 
     /**
-     * 本地路径
+     * 用户编号
      */
-    private String local;
+    private String userId;
 
     /**
-     * 文件大小
+     * 黑名单用户编号
      */
-    private Long size;
-
-    /**
-     * 文件类型
-     */
-    private String type;
-
-    /**
-     * 可访问路径
-     */
-    private String url;
+    private String blackedUserId;
 
     /**
      * 创建时间

@@ -229,7 +229,7 @@
     color: #fff;
 }
 
-/* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
+/* Font Awesome uses the Unicode PrivateMessage Use Area (PUA) to ensure screen
 readers do not read off random characters that represent icons */
 .fa-500px:before {
     content: "\f26e";
