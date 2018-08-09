@@ -11,41 +11,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserDAO extends MongoRepository<User, String> {
 
-    /**
-     * 通过UID查找用户
-     *
-     * @param uid UID
-     *
-     * @return {@link User}
-     */
     User findByUid(String uid);
 
-    /**
-     * 验证密码是否正确
-     *
-     * @param id 用户编号
-     * @param password 密码
-     *
-     * @return 密码是否正确
-     */
     boolean existsByIdAndPassword(String id, String password);
 
-    /**
-     * 统计邮箱注册的个数
-     *
-     * @param email 邮箱
-     *
-     * @return 个数
-     */
     Integer countByEmail(String email);
 
-    /**
-     * 通过邮箱和密码查找用户
-     *
-     * @param email 邮箱
-     * @param password 密码
-     *
-     * @return {@link User}
-     */
     User findByEmailAndPassword(String email, String password);
 }

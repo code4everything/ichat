@@ -20,14 +20,24 @@ public class Contact {
     private String id;
 
     /**
-     * 邀请者
+     * 用户编号
      */
-    private String inviter;
+    private String userId;
 
     /**
-     * 被邀请者
+     * 朋友编号
      */
-    private String invitee;
+    private String friendId;
+
+    /**
+     * 标签
+     */
+    private String tag;
+
+    /**
+     * 备注名
+     */
+    private String noteName;
 
     /**
      * 创建时间
@@ -38,4 +48,9 @@ public class Contact {
      * 状态：0拒绝，1等待同意，2同意
      */
     private String status;
+
+    /**
+     * 信息更新时间
+     */
+    private Long updateTime;
 }

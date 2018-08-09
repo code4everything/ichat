@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 /**
+ * 违规举报
+ *
  * @author pantao
  * @since 2018-08-08
  */

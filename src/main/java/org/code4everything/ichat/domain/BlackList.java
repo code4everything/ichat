@@ -6,13 +6,15 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 /**
+ * 用户黑名单
+ *
  * @author pantao
  * @since 2018-08-08
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserBlackList {
+public class BlackList {
 
     @Id
     private String id;

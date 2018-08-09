@@ -22,6 +22,6 @@ public class PasswordUpdateDTO {
     private String oldPassword;
 
     @ApiModelProperty(value = "新密码", required = true)
-    @FieldChecking(message = "oldPassword length must between 6 and 20", expression = "val.length()>5&&val.length()<21")
+    @FieldChecking(message = "password length must between 6 and 20", expression = "val.length()>5&&val.length()<21")
     private String newPassword;
 }
