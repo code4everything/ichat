@@ -13,7 +13,7 @@ public interface ContactService {
 
     List<Contact> list(String userId);
 
-    void updateStatus(String userId, String friendId, String status);
+    void updateStatus(String userId, String friendId, String noteName, String status);
 
     void update(String userId, ContactDTO contact);
 
@@ -23,5 +23,5 @@ public interface ContactService {
 
     void remove(String id, String userId, String friendId);
 
-    void inviting(String userId, String friendId);
+    void inviting(String userId, String friendId, String noteName);
 }

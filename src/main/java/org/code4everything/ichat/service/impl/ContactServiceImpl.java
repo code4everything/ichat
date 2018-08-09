@@ -39,12 +39,12 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public void updateStatus(String userId, String friendId, String status) {
+    public void updateStatus(String userId, String friendId, String noteName, String status) {
         Query query = new Query(Criteria.where("userId").is(friendId).and("friendId").is(userId));
         Update update = new Update().set("status", status);
         mongoTemplate.updateFirst(query, update, Contact.class);
         if (IchatValueConsts.TWO_STR.equals(status)) {
-            save(userId, friendId, status);
+            save(userId, friendId, noteName, status);
         }
     }
 
@@ -80,10 +80,10 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public void inviting(String userId, String friendId) {
+    public void inviting(String userId, String friendId, String noteName) {
         Contact contact = contactDAO.findByUserIdAndFriendId(userId, friendId);
         if (Checker.isNull(contact)) {
-            save(userId, friendId, IchatValueConsts.ONE_STR);
+            save(userId, friendId, noteName, IchatValueConsts.ONE_STR);
         } else {
             contact.setStatus(IchatValueConsts.ONE_STR);
             contact.setUpdateTime(System.currentTimeMillis());
@@ -94,12 +94,13 @@ public class ContactServiceImpl implements ContactService {
         }
     }
 
-    private void save(String userId, String friendId, String status) {
+    private void save(String userId, String friendId, String noteName, String status) {
         Contact contact = new Contact();
         Long time = System.currentTimeMillis();
         contact.setCreateTime(time);
         contact.setId(RandomUtil.simpleUUID());
         contact.setFriendId(friendId);
+        contact.setNoteName(noteName);
         contact.setUserId(userId);
         contact.setStatus(status);
         contact.setUpdateTime(time);

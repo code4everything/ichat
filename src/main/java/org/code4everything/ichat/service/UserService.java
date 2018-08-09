@@ -14,6 +14,10 @@ import java.util.Optional;
  */
 public interface UserService {
 
+    boolean existsById(String id);
+
+    String getUsernameById(String id);
+
     String getUserIdByUid(String uid);
 
     List<SimpleUserVO> listUserBySearch(String word);

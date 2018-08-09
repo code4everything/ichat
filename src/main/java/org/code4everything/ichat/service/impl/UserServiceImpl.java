@@ -56,6 +56,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean existsById(String id) {
+        return userDAO.existsById(id);
+    }
+
+    @Override
+    public String getUsernameById(String id) {
+        User user = userDAO.findById(id).get();
+        return user.getUsername();
+    }
+
+    @Override
     public String getUserIdByUid(String uid) {
         User user = userDAO.findByUid(uid);
         return Checker.isNull(user) ? null : user.getId();

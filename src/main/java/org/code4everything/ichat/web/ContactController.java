@@ -54,17 +54,26 @@ public class ContactController {
     @ApiOperation("同意好友邀请")
     @ApiImplicitParam(name = "friendId", value = "好友编号", dataType = "string", required = true)
     public ResultObject agree(@RequestParam String friendId) {
-        String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
-        contactService.updateStatus(userId, friendId, IchatValueConsts.TWO_STR);
-        return new ResultObject();
+        if (userService.existsById(friendId)) {
+            String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+            String noteName = userService.getUsernameById(friendId);
+            contactService.updateStatus(userId, friendId, noteName, IchatValueConsts.TWO_STR);
+            return new ResultObject();
+        }
+        return CheckResult.getErrorResult("用户不存在");
     }
 
     @RequestMapping(value = "/reject", method = RequestMethod.PUT)
     @ApiOperation("拒绝好友邀请")
+    @ApiImplicitParam(name = "friendId", value = "好友编号", dataType = "string", required = true)
     public ResultObject reject(@RequestParam String friendId) {
-        String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
-        contactService.updateStatus(userId, friendId, IchatValueConsts.ZERO_STR);
-        return new ResultObject();
+        if (userService.existsById(friendId)) {
+            String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+            String noteName = userService.getUsernameById(friendId);
+            contactService.updateStatus(userId, friendId, noteName, IchatValueConsts.ZERO_STR);
+            return new ResultObject();
+        }
+        return CheckResult.getErrorResult("用户不存在");
     }
 
     @RequestMapping(value = "", method = RequestMethod.PUT)
@@ -93,16 +102,19 @@ public class ContactController {
     public ResultObject addContact(@RequestParam String uid) {
         String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
         String friendId = userService.getUserIdByUid(uid);
+        if (Checker.isEmpty(friendId)) {
+            return CheckResult.getErrorResult("该用户不存在");
+        }
         if (contactService.isFriend(userId, friendId)) {
-            return new ResultObject("你们已经是好友关系，无需再添加");
+            return CheckResult.getErrorResult("你们已经是好友关系，无需再添加");
         }
         if (contactService.isInvited(userId, friendId)) {
-            return new ResultObject("已经发出了添加邀请，等待同意中");
+            return CheckResult.getErrorResult("已经发出了添加邀请，等待同意中");
         }
         if (blackListService.isBanned(userId, friendId)) {
-            return new ResultObject("添加失败，对方在你黑名单中或你在对方黑名单列表中");
+            return CheckResult.getErrorResult("添加失败，对方在你黑名单中或你在对方黑名单列表中");
         }
-        contactService.inviting(userId, friendId);
+        contactService.inviting(userId, friendId, userService.getUsernameById(friendId));
         return new ResultObject("发出邀请成功");
     }
 }
