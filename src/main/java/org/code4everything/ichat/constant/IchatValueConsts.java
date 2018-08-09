@@ -6,6 +6,8 @@ package org.code4everything.ichat.constant;
  */
 public class IchatValueConsts {
 
+    public static final String ONE_STR = "1";
+
     public static final String ZERO_STR = "0";
 
     public static final String TWO_STR = "2";

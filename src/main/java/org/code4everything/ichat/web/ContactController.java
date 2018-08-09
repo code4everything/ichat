@@ -43,6 +43,13 @@ public class ContactController {
         this.blackListService = blackListService;
     }
 
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @ApiOperation("获取好友列表")
+    public ResultObject list() {
+        String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        return new ResultObject(contactService.list(userId));
+    }
+
     @RequestMapping(value = "/agree", method = RequestMethod.PUT)
     @ApiOperation("同意好友邀请")
     @ApiImplicitParam(name = "friendId", value = "好友编号", dataType = "string", required = true)

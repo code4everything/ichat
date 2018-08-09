@@ -14,6 +14,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author pantao
  * @since 2018-08-07
@@ -29,6 +31,11 @@ public class ContactServiceImpl implements ContactService {
     public ContactServiceImpl(ContactDAO contactDAO, MongoTemplate mongoTemplate) {
         this.contactDAO = contactDAO;
         this.mongoTemplate = mongoTemplate;
+    }
+
+    @Override
+    public List<Contact> list(String userId) {
+        return contactDAO.findByUserIdAndStatus(userId, IchatValueConsts.TWO_STR);
     }
 
     @Override
@@ -75,14 +82,14 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public void inviting(String userId, String friendId) {
         Contact contact = contactDAO.findByUserIdAndFriendId(userId, friendId);
-        String status = "1";
         if (Checker.isNull(contact)) {
-            save(userId, friendId, status);
+            save(userId, friendId, IchatValueConsts.ONE_STR);
         } else {
-            contact.setStatus(status);
+            contact.setStatus(IchatValueConsts.ONE_STR);
             contact.setUpdateTime(System.currentTimeMillis());
             Query query = new Query(Criteria.where("userId").is(userId).and("friendId").is(friendId));
-            Update update = new Update().set("status", status).set("updateTime", System.currentTimeMillis());
+            Update update = new Update();
+            update.set("status", IchatValueConsts.ONE_STR).set("updateTime", System.currentTimeMillis());
             mongoTemplate.updateFirst(query, update, Contact.class);
         }
     }
