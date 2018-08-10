@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface BlackListDAO extends MongoRepository<BlackList, String> {
 
     boolean existsByUserIdAndBlackedUserId(String userId, String anotherUserId);
+
+    boolean deleteByIdAndUserId(String id, String userId);
 }

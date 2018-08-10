@@ -7,4 +7,8 @@ package org.code4everything.ichat.service;
 public interface BlackListService {
 
     boolean isBanned(String userId, String anotherUserId);
+
+    void delete(String userId, String id);
+
+    void addToBlackList(String userId, String uid);
 }
