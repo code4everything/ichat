@@ -3,6 +3,7 @@ package org.code4everything.ichat.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.code4everything.ichat.model.GroupDTO;
 import org.springframework.data.annotation.Id;
 
 /**
@@ -45,7 +46,21 @@ public class Group {
     private String type;
 
     /**
+     * 是否私有：0公开（允许任何人加入群），1私有（需管理员同意后方可加入）
+     */
+    private String isPrivate;
+
+    /**
      * 创建时间
      */
     private Long createTime;
+
+    public Group(GroupDTO groupDTO) {
+        name = groupDTO.getName();
+        avatar = groupDTO.getAvatar();
+        link = groupDTO.getLink();
+        about = groupDTO.getAbout();
+        type = groupDTO.getType();
+        isPrivate = groupDTO.getIsPrivate();
+    }
 }
