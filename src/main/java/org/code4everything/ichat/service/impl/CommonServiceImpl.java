@@ -61,7 +61,14 @@ public class CommonServiceImpl implements CommonService {
             return url;
         }
         if (saveFile(local, avatar, userId)) {
-            documentDAO.save(new Document(RandomUtil.simpleUUID(), local, url, System.currentTimeMillis()));
+            document = new Document();
+            document.setCreateTime(System.currentTimeMillis());
+            document.setId(RandomUtil.simpleUUID());
+            document.setLocal(local);
+            document.setSize(avatar.getSize());
+            document.setType(FileExecutor.getFileSuffix(avatar.getName()));
+            document.setUrl(url);
+            documentDAO.save(document);
             return url;
         }
         return "内部错误：写入头像文件失败";
@@ -74,7 +81,7 @@ public class CommonServiceImpl implements CommonService {
             return true;
         } catch (IOException e) {
             logger.error(e.getMessage());
-            String msg = "write avatar to disk error: " + e.getMessage();
+            String msg = "write file to disk error: " + e.getMessage();
             saveLog(LogLevel.ERROR, CLASS_NAME + "#saveFile", msg, userId);
             return false;
         }
