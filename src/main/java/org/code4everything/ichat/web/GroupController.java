@@ -6,6 +6,7 @@ import com.zhazhapan.util.model.ResultObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.model.GroupDTO;
 import org.code4everything.ichat.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,8 @@ public class GroupController {
     public ResultObject newGroup(@RequestBody @ApiParam GroupDTO group) {
         CheckResult result = Checker.checkBean(group);
         if (result.passed) {
-            return new ResultObject(groupService.save(group));
+            String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+            return new ResultObject(groupService.newGroup("ii", group));
         }
         return result.resultObject;
     }

@@ -9,5 +9,5 @@ import org.code4everything.ichat.model.GroupDTO;
  */
 public interface GroupService {
 
-    Group save(GroupDTO groupDTO);
+    Group newGroup(String userId, GroupDTO groupDTO);
 }

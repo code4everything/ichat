@@ -46,6 +46,11 @@ public class Group {
     private String type;
 
     /**
+     * 创建者（用户编号）
+     */
+    private String creator;
+
+    /**
      * 是否私有：0公开（允许任何人加入群），1私有（需管理员同意后方可加入）
      */
     private String isPrivate;
