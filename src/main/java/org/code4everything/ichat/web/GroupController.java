@@ -3,10 +3,7 @@ package org.code4everything.ichat.web;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.model.CheckResult;
 import com.zhazhapan.util.model.ResultObject;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.model.GroupDTO;
 import org.code4everything.ichat.service.GroupService;
@@ -56,6 +53,8 @@ public class GroupController {
 
     @RequestMapping(value = "/avatar", method = RequestMethod.PUT)
     @ApiOperation("更新组头像")
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "组编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "avatar", value = "头像文件", required = true, dataType = "string")})
     public ResultObject uploadAvatar(@RequestParam String groupId, @RequestParam MultipartFile avatar) {
         ResultObject resultObject = new ResultObject();
         String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
@@ -69,6 +68,21 @@ public class GroupController {
             resultObject.message = url;
         }
         return resultObject;
+    }
 
+    @RequestMapping(value = "/transfer", method = RequestMethod.PUT)
+    @ApiOperation("转让群组")
+    public ResultObject transfer(String groupId, String userId) {
+        String originalUserId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        groupService.updateCreator(originalUserId, groupId, userId);
+        return new ResultObject("转让成功");
+    }
+
+    @RequestMapping(value = "/type", method = RequestMethod.PUT)
+    @ApiOperation("更新群组类型（是否公开）")
+    public ResultObject updateType(@RequestParam String groupId, @RequestParam String type) {
+        String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        groupService.updateType(userId, groupId, type);
+        return new ResultObject("更新成功");
     }
 }

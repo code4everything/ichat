@@ -75,4 +75,17 @@ public class GroupServiceImpl implements GroupService {
         }
         return url;
     }
+
+    @Override
+    public void updateType(String userId, String groupId, String type) {
+        Query query = new Query(Criteria.where("id").is(groupId).and("creator").is(userId));
+        mongoTemplate.updateFirst(query, new Update().set("isPrivate", type), Group.class);
+    }
+
+    @Override
+    public void updateCreator(String originalCreator, String groupId, String newCreator) {
+        Query query = new Query(Criteria.where("id").is(groupId).and("creator").is(originalCreator));
+        Update update = new Update().set("creator", newCreator);
+        mongoTemplate.updateFirst(query, update, Group.class);
+    }
 }

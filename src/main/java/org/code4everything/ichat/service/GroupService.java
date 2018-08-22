@@ -15,4 +15,8 @@ public interface GroupService {
     void dismiss(String userId, String groupId);
 
     String updateAvatar(String userId, String groupId, MultipartFile avatar);
+
+    void updateType(String userId, String groupId, String type);
+
+    void updateCreator(String originalCreator, String groupId, String newCreator);
 }
