@@ -17,4 +17,6 @@ public class IchatValueConsts {
     public static final String GENDER_STRING = "男女";
 
     public static final String AVATAR_MAPPING = "/avatar/";
+
+    public static final String GROUP_TYPE_STRING = "01";
 }

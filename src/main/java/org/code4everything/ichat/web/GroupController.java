@@ -1,5 +1,6 @@
 package org.code4everything.ichat.web;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.model.CheckResult;
 import com.zhazhapan.util.model.ResultObject;
@@ -35,6 +36,9 @@ public class GroupController {
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     @ApiOperation("新建分组")
     public ResultObject newGroup(@RequestBody @ApiParam GroupDTO group) {
+        if (groupService.linkExists(group.getLink())) {
+            return CheckResult.getErrorResult("组链接已经存在");
+        }
         CheckResult result = Checker.checkBean(group);
         if (result.passed) {
             String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
@@ -72,6 +76,8 @@ public class GroupController {
 
     @RequestMapping(value = "/transfer", method = RequestMethod.PUT)
     @ApiOperation("转让群组")
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "组编号", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "userId", value = "新群主编号", required = true, dataType = "string")})
     public ResultObject transfer(String groupId, String userId) {
         String originalUserId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
         groupService.updateCreator(originalUserId, groupId, userId);
@@ -80,9 +86,48 @@ public class GroupController {
 
     @RequestMapping(value = "/type", method = RequestMethod.PUT)
     @ApiOperation("更新群组类型（是否公开）")
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "群组编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "type", value = "群组类型：0公开，1私有", dataType = "string", required = true,
+                    allowableValues = "0, 1")})
     public ResultObject updateType(@RequestParam String groupId, @RequestParam String type) {
+        if (!IchatValueConsts.GROUP_TYPE_STRING.contains(type)) {
+            return CheckResult.getErrorResult("参数格式不正确");
+        }
         String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
         groupService.updateType(userId, groupId, type);
         return new ResultObject("更新成功");
+    }
+
+    @RequestMapping(value = "/link", method = RequestMethod.PUT)
+    @ApiOperation("更新组链接")
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "组编号", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "newLink", value = "新的组链接", dataType = "string", required = true)})
+    public ResultObject updateLink(@RequestParam String groupId, @RequestParam String newLink) {
+        if (groupService.linkExists(newLink)) {
+            return CheckResult.getErrorResult("组链接已经存在");
+        }
+        String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        groupService.updateLink(userId, groupId, newLink);
+        return new ResultObject("更新成功");
+    }
+
+    @RequestMapping(value = "/info", method = RequestMethod.PUT)
+    @ApiOperation("更新群组信息")
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "组编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "name", value = "组名称", dataType = "string"), @ApiImplicitParam(name = "about",
+            value = "组介绍", dataType = "string")})
+    public ResultObject updateInfo(@RequestParam String groupId, String name, String about) {
+        String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        groupService.updateInfo(userId, groupId, name, about);
+        return new ResultObject("更新成功");
+    }
+
+    @RequestMapping(value = "/link/exists", method = RequestMethod.GET)
+    @ApiOperation("检查组链接是否存在")
+    @ApiImplicitParam(name = "link", value = "组链接", required = true, dataType = "string")
+    public ResultObject linkExists(String link) {
+        JSONObject object = new JSONObject();
+        object.put("exists", groupService.linkExists(link));
+        return new ResultObject(object);
     }
 }

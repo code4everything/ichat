@@ -1,6 +1,7 @@
 package org.code4everything.ichat.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
+import com.zhazhapan.util.Checker;
 import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.dao.GroupDAO;
 import org.code4everything.ichat.dao.GroupMemberDAO;
@@ -45,6 +46,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public boolean linkExists(String link) {
+        return Checker.isEmpty(link) || groupDAO.existsByLink(link);
+    }
+
+    @Override
     public Group newGroup(String userId, GroupDTO groupDTO) {
         Group group = new Group(groupDTO);
         Long timestamp = System.currentTimeMillis();
@@ -62,6 +68,30 @@ public class GroupServiceImpl implements GroupService {
         if (result) {
             groupMemberDAO.deleteByGroupId(groupId);
         }
+    }
+
+    @Override
+    public void updateInfo(String userId, String groupId, String name, String about) {
+        Query query = new Query(Criteria.where("id").is(groupId).and("creator").is(userId));
+        Update update = null;
+        if (Checker.isNotEmptyOr(name, about)) {
+            update = new Update();
+            if (Checker.isNotEmpty(name)) {
+                update.set("name", name);
+            }
+            if (Checker.isNotEmpty(about)) {
+                update.set("about", about);
+            }
+        }
+        if (Checker.isNotNull(update)) {
+            mongoTemplate.updateFirst(query, update, Group.class);
+        }
+    }
+
+    @Override
+    public void updateLink(String userId, String groupId, String link) {
+        Query query = new Query(Criteria.where("id").is(groupId).and("creator").is(userId));
+        mongoTemplate.updateFirst(query, new Update().set("link", link), Group.class);
     }
 
     @Override

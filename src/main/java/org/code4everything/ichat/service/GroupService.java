@@ -10,9 +10,15 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface GroupService {
 
+    boolean linkExists(String link);
+
     Group newGroup(String userId, GroupDTO groupDTO);
 
     void dismiss(String userId, String groupId);
+
+    void updateInfo(String userId, String groupId, String name, String about);
+
+    void updateLink(String userId, String groupId, String link);
 
     String updateAvatar(String userId, String groupId, MultipartFile avatar);
 
