@@ -1,13 +1,8 @@
 package org.code4everything.ichat.service.impl;
 
-import com.zhazhapan.modules.constant.ValueConsts;
 import com.zhazhapan.util.Checker;
-import com.zhazhapan.util.FileExecutor;
 import com.zhazhapan.util.encryption.JavaEncrypt;
-import com.zhazhapan.util.enums.LogLevel;
 import org.apache.log4j.Logger;
-import org.code4everything.ichat.constant.ConfigConsts;
-import org.code4everything.ichat.constant.DefaultConfigValueConsts;
 import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.dao.UserDAO;
 import org.code4everything.ichat.domain.User;
@@ -23,11 +18,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -83,25 +74,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String uploadAvatar(String userId, MultipartFile avatar) {
-        if (Checker.isNull(avatar) || avatar.getSize() > ValueConsts.MB) {
-            return "头像大小不能超过1MB";
-        }
-        String local = Checker.checkNull(commonService.getString(ConfigConsts.FILE_STORAGE_PATH),
-                DefaultConfigValueConsts.FILE_STORAGE_PATH);
-        String md5;
-        try {
-            md5 = Arrays.toString(JavaEncrypt.MD5.digest(avatar.getBytes()));
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            String msg = "get md5 from avatar error: " + e.getMessage();
-            commonService.saveLog(LogLevel.ERROR, CLASS_NAME + "#uploadAvatar", msg, userId);
-            return "内部错误：获取文件MD5码失败";
-        }
-        String suffix = FileExecutor.getFileSuffix(Objects.requireNonNull(avatar.getOriginalFilename()));
-        String filename = md5 + ValueConsts.DOT_SIGN + suffix;
-        local += (local.endsWith(File.separator) ? "" : File.separator) + filename;
-        String url = IchatValueConsts.AVATAR_MAPPING + filename;
-        url = commonService.saveDocument(local, url, avatar, userId);
+        String url = commonService.uploadAvatar(userId, avatar);
         if (url.startsWith(IchatValueConsts.AVATAR_MAPPING)) {
             // 头像上传成功
             Query query = new Query(Criteria.where("id").is(userId));

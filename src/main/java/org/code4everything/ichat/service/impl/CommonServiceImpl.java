@@ -7,10 +7,12 @@ import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.FileExecutor;
 import com.zhazhapan.util.MailSender;
 import com.zhazhapan.util.ThreadPool;
+import com.zhazhapan.util.encryption.JavaEncrypt;
 import com.zhazhapan.util.enums.LogLevel;
 import org.apache.log4j.Logger;
 import org.code4everything.ichat.constant.ConfigConsts;
 import org.code4everything.ichat.constant.DefaultConfigValueConsts;
+import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.dao.DocumentDAO;
 import org.code4everything.ichat.dao.LoggerDAO;
 import org.code4everything.ichat.domain.Document;
@@ -22,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,6 +50,29 @@ public class CommonServiceImpl implements CommonService {
         this.loggerDAO = loggerDAO;
         this.redis = redis;
         this.documentDAO = documentDAO;
+    }
+
+    @Override
+    public String uploadAvatar(String userId, MultipartFile avatar) {
+        if (Checker.isNull(avatar) || avatar.getSize() > ValueConsts.MB) {
+            return "头像大小不能超过1MB";
+        }
+        String local = Checker.checkNull(getString(ConfigConsts.FILE_STORAGE_PATH),
+                DefaultConfigValueConsts.FILE_STORAGE_PATH);
+        String md5;
+        try {
+            md5 = Arrays.toString(JavaEncrypt.MD5.digest(avatar.getBytes()));
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            String msg = "get md5 from avatar error: " + e.getMessage();
+            saveLog(LogLevel.ERROR, CLASS_NAME + "#uploadAvatar", msg, userId);
+            return "内部错误：获取文件MD5码失败";
+        }
+        String suffix = FileExecutor.getFileSuffix(Objects.requireNonNull(avatar.getOriginalFilename()));
+        String filename = md5 + ValueConsts.DOT_SIGN + suffix;
+        local += (local.endsWith(File.separator) ? "" : File.separator) + filename;
+        String url = IchatValueConsts.AVATAR_MAPPING + filename;
+        return saveDocument(local, url, avatar, userId);
     }
 
     @Override

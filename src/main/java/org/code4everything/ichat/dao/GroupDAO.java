@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GroupDAO extends MongoRepository<Group, String> {
 
+    boolean deleteByIdAndCreator(String id, String creator);
 }
