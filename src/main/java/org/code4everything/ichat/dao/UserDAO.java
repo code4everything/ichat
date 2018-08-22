@@ -11,7 +11,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserDAO extends MongoRepository<User, String> {
 
+    User getUserByPhone(String phone);
+
+    User getUserByEmail(String email);
+
     User findByUid(String uid);
+
+    User getUserById(String id);
 
     boolean existsByIdAndPassword(String id, String password);
 

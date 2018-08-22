@@ -10,5 +10,15 @@ public interface GroupMemberService {
 
     GroupMember addMember(String groupId, String userId);
 
+    boolean inviteMember(String myId, String groupId, String uid);
+
+    boolean isBanned(String groupId, String userId);
+
+    boolean joinGroup(String userId, String link);
+
+    boolean isAdmin(String userId, String groupId);
+
+    GroupMember addMemberByLink(String link, String userId);
+
     GroupMember addGroupAdmin(String groupId, String userId);
 }

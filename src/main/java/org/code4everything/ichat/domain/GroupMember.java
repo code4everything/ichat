@@ -53,4 +53,9 @@ public class GroupMember {
      * 是否允许通知
      */
     private Boolean notification;
+
+    /**
+     * 状态：0拒绝加入，1等待管理员同意，2等待用户同意，3同意加入，4普通用户邀请（需等待用户同意），5用户邀请（无需等待）
+     */
+    private String status;
 }

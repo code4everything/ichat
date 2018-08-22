@@ -12,4 +12,12 @@ import org.springframework.stereotype.Repository;
 public interface GroupMemberDAO extends MongoRepository<GroupMember, String> {
 
     boolean deleteByGroupId(String groupId);
+
+    boolean existsByGroupIdAndUserIdAndIsAdmin(String groupId, String userId, boolean isAdmin);
+
+    boolean existsByIdAndUserIdAndIsAdmin(String id, String userId, boolean isAdmin);
+
+    boolean existsByGroupIdAndUserIdAndIsBanned(String groupId, String userId, boolean isBanned);
+
+    GroupMember getByGroupIdAndUserId(String groupId, String userId);
 }

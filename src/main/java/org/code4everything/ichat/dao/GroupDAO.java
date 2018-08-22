@@ -14,4 +14,6 @@ public interface GroupDAO extends MongoRepository<Group, String> {
     boolean deleteByIdAndCreator(String id, String creator);
 
     boolean existsByLink(String link);
+
+    Group getGroupByLink(String link);
 }
