@@ -19,4 +19,10 @@ public class IchatValueConsts {
     public static final String AVATAR_MAPPING = "/avatar/";
 
     public static final String GROUP_TYPE_STRING = "01";
+
+    public static final String THREE_STR = "3";
+
+    public static final String FOUR_STR = "4";
+
+    public static final String FIVE_STR = "5";
 }

@@ -45,6 +45,39 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     }
 
     @Override
+    public boolean agree(String myId, String uid, String groupId) {
+        User user = getUserByUid(uid);
+        if (Checker.isNotNull(user)) {
+            GroupMember member = groupMemberDAO.getByGroupIdAndUserId(groupId, user.getId());
+            if (Checker.isNotNull(member)) {
+                switch (member.getStatus()) {
+                    case IchatValueConsts.ONE_STR:
+                        // 管理员同意
+                        if (isAdmin(myId, groupId)) {
+                            member.setStatus("3");
+                        }
+                        break;
+                    case IchatValueConsts.TWO_STR:
+                        // 用户同意
+                        member.setStatus("3");
+                        break;
+                    case IchatValueConsts.FOUR_STR:
+                        member.setStatus("1");
+                        break;
+                    case IchatValueConsts.FIVE_STR:
+                        member.setStatus("1");
+                        break;
+                    default:
+                        break;
+                }
+                groupMemberDAO.save(member);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean inviteMember(String myId, String groupId, String uid) {
         GroupMember member = groupMemberDAO.getByGroupIdAndUserId(groupId, myId);
         if (Checker.isNotNull(member)) {
@@ -54,33 +87,14 @@ public class GroupMemberServiceImpl implements GroupMemberService {
                 GroupMember newMember = groupMemberDAO.getByGroupIdAndUserId(groupId, user.getId());
                 if (Checker.isNull(newMember)) {
                     newMember = getDefaultMember(groupId, user.getId());
+                } else if (IchatValueConsts.THREE_STR.equals(newMember.getStatus())) {
+                    // 已经存在无需邀请
+                    return false;
                 }
                 if (member.getIsAdmin()) {
-                    if (IchatValueConsts.ZERO_STR.equals(setting.getInvitation())) {
-                        newMember.setStatus("2");
-                    } else if (IchatValueConsts.ONE_STR.equals(setting.getInvitation())) {
-                        if (contactDAO.existsByUserIdAndFriendIdAndStatus(user.getId(), myId,
-                                IchatValueConsts.TWO_STR)) {
-                            newMember.setStatus("3");
-                        } else {
-                            newMember.setStatus("2");
-                        }
-                    } else {
-                        newMember.setStatus("3");
-                    }
+                    setMemberStatus(myId, newMember, user.getId(), "2", "3", setting.getInvitation());
                 } else {
-                    if (IchatValueConsts.ZERO_STR.equals(setting.getInvitation())) {
-                        newMember.setStatus("4");
-                    } else if (IchatValueConsts.ONE_STR.equals(setting.getInvitation())) {
-                        if (contactDAO.existsByUserIdAndFriendIdAndStatus(user.getId(), myId,
-                                IchatValueConsts.TWO_STR)) {
-                            newMember.setStatus("5");
-                        } else {
-                            newMember.setStatus("4");
-                        }
-                    } else {
-                        newMember.setStatus("5");
-                    }
+                    setMemberStatus(myId, newMember, user.getId(), "4", "5", setting.getInvitation());
                 }
                 groupMemberDAO.save(newMember);
                 return true;
@@ -101,6 +115,8 @@ public class GroupMemberServiceImpl implements GroupMemberService {
             GroupMember member = groupMemberDAO.getByGroupIdAndUserId(group.getId(), userId);
             if (Checker.isNull(member)) {
                 member = getDefaultMember(group.getId(), userId);
+            } else {
+                member.setStatus("3");
             }
             if (IchatValueConsts.ONE_STR.equals(group.getIsPrivate())) {
                 // 私有的群组，状态设置为等待管理员同意
@@ -142,6 +158,21 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         member.setStatus("3");
         member.setIsAdmin(false);
         return member;
+    }
+
+    private void setMemberStatus(String myId, GroupMember member, String userId, String aStatus, String bStatus,
+                                 String invitation) {
+        if (IchatValueConsts.ZERO_STR.equals(invitation)) {
+            member.setStatus(aStatus);
+        } else if (IchatValueConsts.ONE_STR.equals(invitation)) {
+            if (contactDAO.existsByUserIdAndFriendIdAndStatus(userId, myId, IchatValueConsts.TWO_STR)) {
+                member.setStatus(bStatus);
+            } else {
+                member.setStatus(aStatus);
+            }
+        } else {
+            member.setStatus(bStatus);
+        }
     }
 
     private User getUserByUid(String uid) {

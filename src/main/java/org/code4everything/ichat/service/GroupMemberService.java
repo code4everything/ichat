@@ -10,6 +10,8 @@ public interface GroupMemberService {
 
     GroupMember addMember(String groupId, String userId);
 
+    boolean agree(String myId, String uid, String groupId);
+
     boolean inviteMember(String myId, String groupId, String uid);
 
     boolean isBanned(String groupId, String userId);

@@ -3,6 +3,7 @@ package org.code4everything.ichat.web;
 import com.zhazhapan.util.model.ResultObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.service.GroupMemberService;
@@ -43,8 +44,20 @@ public class GroupMemberController {
 
     @RequestMapping(value = "/invite", method = RequestMethod.POST)
     @ApiOperation("邀请用户加入")
-    public ResultObject invite(String groupId, String uid) {
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "组编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "uid", value = "用户唯一标识符（手机号，邮箱，编号，唯一标识符）", required = true, dataType = "string")})
+    public ResultObject invite(@RequestParam String groupId, @RequestParam String uid) {
         String myId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
         return new ResultObject(groupMemberService.inviteMember(myId, groupId, uid) ? "操作失败" : "邀请成功");
+    }
+
+    @RequestMapping(value = "/agree", method = RequestMethod.PUT)
+    @ApiOperation("同意加入")
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "组编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "uid", value = "用户唯一标识符（手机号，邮箱，编号，唯一标识符）", dataType = "string")})
+    public ResultObject agree(@RequestParam String groupId, @RequestParam String uid) {
+        String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        boolean result = groupMemberService.agree(userId, uid, groupId);
+        return new ResultObject(result ? "加入成功" : "操作失败");
     }
 }
