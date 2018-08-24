@@ -1,5 +1,6 @@
 package org.code4everything.ichat.web;
 
+import com.zhazhapan.util.model.CheckResult;
 import com.zhazhapan.util.model.ResultObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -59,5 +60,16 @@ public class GroupMemberController {
         String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
         boolean result = groupMemberService.agree(userId, uid, groupId);
         return new ResultObject(result ? "加入成功" : "操作失败");
+    }
+
+    @RequestMapping(value = "/admin-mode", method = RequestMethod.PUT)
+    @ApiOperation("切换成员管理员身份")
+    public ResultObject toggleAdmin(String groupId, String userId, String isAdmin) {
+        String myId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        if (myId.equals(userId) || !groupMemberService.isCreator(myId, groupId)) {
+            return CheckResult.getErrorResult("权限不够");
+        }
+        groupMemberService.toggleAdminMode(groupId, userId, isAdmin);
+        return new ResultObject("设置成功");
     }
 }

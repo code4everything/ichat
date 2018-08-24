@@ -10,6 +10,10 @@ public interface GroupMemberService {
 
     GroupMember addMember(String groupId, String userId);
 
+    void toggleAdminMode(String groupId, String userId, String isAdmin);
+
+    boolean isCreator(String userId, String groupId);
+
     boolean agree(String myId, String uid, String groupId);
 
     boolean inviteMember(String myId, String groupId, String uid);

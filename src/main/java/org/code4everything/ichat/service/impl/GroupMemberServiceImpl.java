@@ -10,6 +10,10 @@ import org.code4everything.ichat.domain.User;
 import org.code4everything.ichat.domain.UserSetting;
 import org.code4everything.ichat.service.GroupMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,19 +33,34 @@ public class GroupMemberServiceImpl implements GroupMemberService {
 
     private final ContactDAO contactDAO;
 
+    private final MongoTemplate mongoTemplate;
+
     @Autowired
     public GroupMemberServiceImpl(GroupMemberDAO groupMemberDAO, GroupDAO groupDAO, UserDAO userDAO,
-                                  UserSettingDAO userSettingDAO, ContactDAO contactDAO) {
+                                  UserSettingDAO userSettingDAO, ContactDAO contactDAO, MongoTemplate mongoTemplate) {
         this.groupMemberDAO = groupMemberDAO;
         this.groupDAO = groupDAO;
         this.userDAO = userDAO;
         this.userSettingDAO = userSettingDAO;
         this.contactDAO = contactDAO;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
     public GroupMember addMember(String groupId, String userId) {
         return groupMemberDAO.save(getDefaultMember(groupId, userId));
+    }
+
+    @Override
+    public void toggleAdminMode(String groupId, String userId, String isAdmin) {
+        Query query = new Query(Criteria.where("groupId").is(groupId).and("userId").is(userId));
+        Update update = new Update().set("isAdmin", IchatValueConsts.ONE_STR.equals(isAdmin));
+        mongoTemplate.updateFirst(query, update, GroupMember.class);
+    }
+
+    @Override
+    public boolean isCreator(String userId, String groupId) {
+        return groupDAO.existsByIdAndCreator(groupId, userId);
     }
 
     @Override
