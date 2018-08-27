@@ -64,12 +64,60 @@ public class GroupMemberController {
 
     @RequestMapping(value = "/admin-mode", method = RequestMethod.PUT)
     @ApiOperation("切换成员管理员身份")
-    public ResultObject toggleAdmin(String groupId, String userId, String isAdmin) {
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "群组编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "userId", value = "用户编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "isAdmin", value = "是否为管理员", allowableValues = "0 ,1", required = true,
+                    dataType = "string")})
+    public ResultObject toggleAdmin(@RequestParam String groupId, @RequestParam String userId,
+                                    @RequestParam String isAdmin) {
         String myId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
         if (myId.equals(userId) || !groupMemberService.isCreator(myId, groupId)) {
             return CheckResult.getErrorResult("权限不够");
         }
         groupMemberService.toggleAdminMode(groupId, userId, isAdmin);
         return new ResultObject("设置成功");
+    }
+
+    @RequestMapping(value = "/restricted", method = RequestMethod.PUT)
+    @ApiOperation("设置成员是否受限")
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "群组编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "userId", value = "用户编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "restricted", value = "是否限制成员发言", allowableValues = "0 ,1", required = true,
+                    dataType = "string")})
+    public ResultObject setRestricted(@RequestParam String groupId, @RequestParam String userId,
+                                      @RequestParam String restricted) {
+        String myId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        boolean result = groupMemberService.setRestricted(myId, groupId, userId, restricted);
+        return result ? new ResultObject("设置成功") : CheckResult.getErrorResult("权限不够");
+    }
+
+    @RequestMapping(value = "/banned", method = RequestMethod.PUT)
+    @ApiOperation("是否拉黑成员")
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "群组编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "userId", value = "用户编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "banned", value = "是否拉黑", allowableValues = "0, 1", required = true, dataType =
+                    "string")})
+    public ResultObject setBanned(@RequestParam String groupId, @RequestParam String userId,
+                                  @RequestParam String banned) {
+        String myId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        boolean result = groupMemberService.setBanned(myId, groupId, userId, banned);
+        return result ? new ResultObject("设置成功") : CheckResult.getErrorResult("权限不够");
+    }
+
+    @RequestMapping(value = "/notification", method = RequestMethod.PUT)
+    @ApiOperation("消息是否通知")
+    @ApiImplicitParams({@ApiImplicitParam(name = "groupId", value = "群组编号", dataType = "string", required = true),
+            @ApiImplicitParam(name = "notification", value = "是否允许通知", allowableValues = "0, 1", required = true,
+                    dataType = "string")})
+    public ResultObject setNotification(@RequestParam String groupId, @RequestParam String notification) {
+        String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        groupMemberService.setNotification(groupId, userId, notification);
+        return new ResultObject();
+    }
+
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @ApiOperation("获取所有群组成员")
+    public ResultObject listByGroupId(String groupId) {
+        return new ResultObject(groupMemberService.listGroupMember(groupId));
     }
 }

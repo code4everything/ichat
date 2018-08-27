@@ -2,13 +2,23 @@ package org.code4everything.ichat.service;
 
 import org.code4everything.ichat.domain.GroupMember;
 
+import java.util.List;
+
 /**
  * @author pantao
  * @since 2018/8/16
  */
 public interface GroupMemberService {
 
+    List<GroupMember> listGroupMember(String groupId);
+
     GroupMember addMember(String groupId, String userId);
+
+    boolean setBanned(String myId, String groupId, String userId, String banned);
+
+    boolean setRestricted(String myId, String groupId, String userId, String restricted);
+
+    void setNotification(String groupId, String userId, String notification);
 
     void toggleAdminMode(String groupId, String userId, String isAdmin);
 

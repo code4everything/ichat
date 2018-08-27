@@ -16,6 +16,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author pantao
  * @since 2018/8/16
@@ -47,8 +49,30 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     }
 
     @Override
+    public List<GroupMember> listGroupMember(String groupId) {
+        return groupMemberDAO.getByGroupId(groupId);
+    }
+
+    @Override
     public GroupMember addMember(String groupId, String userId) {
         return groupMemberDAO.save(getDefaultMember(groupId, userId));
+    }
+
+    @Override
+    public boolean setBanned(String myId, String groupId, String userId, String banned) {
+        return updateBoolean(myId, groupId, userId, "isBanned", banned);
+    }
+
+    @Override
+    public boolean setRestricted(String myId, String groupId, String userId, String restricted) {
+        return updateBoolean(myId, groupId, userId, "isRestricted", restricted);
+    }
+
+    @Override
+    public void setNotification(String groupId, String userId, String notification) {
+        Query query = new Query(Criteria.where("groupId").is(groupId).and("userId").is(userId));
+        Update update = new Update().set("notification", IchatValueConsts.ONE_STR.equals(notification));
+        mongoTemplate.updateFirst(query, update, GroupMember.class);
     }
 
     @Override
@@ -163,6 +187,17 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         GroupMember member = getDefaultMember(groupId, userId);
         member.setIsAdmin(true);
         return groupMemberDAO.save(member);
+    }
+
+    private boolean updateBoolean(String myId, String groupId, String userId, String field, String value) {
+        if (isAdmin(myId, groupId) && !isAdmin(userId, groupId)) {
+            Query query = new Query(Criteria.where("groupId").is(groupId).and("userId").is(userId));
+            Update update = new Update();
+            update.set(field, IchatValueConsts.ONE_STR.equals(value));
+            mongoTemplate.updateFirst(query, update, GroupMember.class);
+            return false;
+        }
+        return false;
     }
 
     private GroupMember getDefaultMember(String groupId, String userId) {
