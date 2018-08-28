@@ -12,6 +12,8 @@ public interface GroupMemberService {
 
     List<GroupMember> listGroupMember(String groupId);
 
+    boolean isMember(String groupId, String userId);
+
     GroupMember addMember(String groupId, String userId);
 
     boolean setBanned(String myId, String groupId, String userId, String banned);

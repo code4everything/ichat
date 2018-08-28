@@ -54,6 +54,12 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     }
 
     @Override
+    public boolean isMember(String groupId, String userId) {
+        GroupMember member = groupMemberDAO.getByGroupIdAndUserId(groupId, userId);
+        return Checker.isNotNull(member) && !member.getIsBanned();
+    }
+
+    @Override
     public GroupMember addMember(String groupId, String userId) {
         return groupMemberDAO.save(getDefaultMember(groupId, userId));
     }

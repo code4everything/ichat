@@ -6,6 +6,8 @@ package org.code4everything.ichat.constant;
  */
 public class ConfigConsts {
 
+    public static final String MESSAGE_PAGE_SIZE = "message.page.size";
+
     public static final String EMAIL_TEMPLATE_CODE_TITLE = "email.template.code.title";
 
     public static final String EMAIL_TEMPLATE_CODE_CONTENT = "email.template.code.content";

@@ -13,4 +13,6 @@ public class DefaultConfigValueConsts {
     public static final String EMAIL_TEMPLATE_CODE_CONTENT = "{}";
 
     public static final String FILE_STORAGE_PATH = ValueConsts.USER_HOME;
+
+    public static final Integer MESSAGE_PAGE_SIZE = 100;
 }
