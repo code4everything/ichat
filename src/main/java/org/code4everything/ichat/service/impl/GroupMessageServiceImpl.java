@@ -7,7 +7,9 @@ import com.zhazhapan.util.Formatter;
 import org.code4everything.ichat.constant.ConfigConsts;
 import org.code4everything.ichat.constant.DefaultConfigValueConsts;
 import org.code4everything.ichat.constant.IchatValueConsts;
+import org.code4everything.ichat.dao.GroupMemberDAO;
 import org.code4everything.ichat.dao.GroupMessageDAO;
+import org.code4everything.ichat.domain.GroupMember;
 import org.code4everything.ichat.domain.GroupMessage;
 import org.code4everything.ichat.service.CommonService;
 import org.code4everything.ichat.service.GroupMemberService;
@@ -37,19 +39,28 @@ public class GroupMessageServiceImpl implements GroupMessageService {
 
     private final CommonService commonService;
 
+    private final GroupMemberDAO groupMemberDAO;
+
     @Autowired
     public GroupMessageServiceImpl(GroupMessageDAO groupMessageDAO, MongoTemplate mongoTemplate,
-                                   GroupMemberService groupMemberService, CommonService commonService) {
+                                   GroupMemberService groupMemberService, CommonService commonService,
+                                   GroupMemberDAO groupMemberDAO) {
         this.groupMessageDAO = groupMessageDAO;
         this.mongoTemplate = mongoTemplate;
         this.groupMemberService = groupMemberService;
         this.commonService = commonService;
+        this.groupMemberDAO = groupMemberDAO;
     }
 
     @Override
     public GroupMessage saveMessage(JSONObject jsonObject) {
         GroupMessage message = parseJsonObject(jsonObject);
         if (Checker.isNotNull(message)) {
+            GroupMember member = groupMemberDAO.getByGroupIdAndUserId(message.getTo(), message.getFrom());
+            // 检测成员是否被限制发言或被拉黑
+            if (Checker.isNull(member) || member.getIsRestricted() || member.getIsBanned()) {
+                return null;
+            }
             groupMessageDAO.save(message);
         }
         return message;
