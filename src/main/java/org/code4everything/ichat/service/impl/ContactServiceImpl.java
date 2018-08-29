@@ -4,7 +4,9 @@ import cn.hutool.core.util.RandomUtil;
 import com.zhazhapan.util.Checker;
 import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.dao.ContactDAO;
+import org.code4everything.ichat.dao.UserSettingDAO;
 import org.code4everything.ichat.domain.Contact;
+import org.code4everything.ichat.domain.UserSetting;
 import org.code4everything.ichat.model.ContactDTO;
 import org.code4everything.ichat.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +29,19 @@ public class ContactServiceImpl implements ContactService {
 
     private final MongoTemplate mongoTemplate;
 
+    private final UserSettingDAO userSettingDAO;
+
     @Autowired
-    public ContactServiceImpl(ContactDAO contactDAO, MongoTemplate mongoTemplate) {
+    public ContactServiceImpl(ContactDAO contactDAO, MongoTemplate mongoTemplate, UserSettingDAO userSettingDAO) {
         this.contactDAO = contactDAO;
         this.mongoTemplate = mongoTemplate;
+        this.userSettingDAO = userSettingDAO;
+    }
+
+    @Override
+    public boolean shouldStrangerChat(String userId) {
+        UserSetting setting = userSettingDAO.getByUserId(userId);
+        return Checker.isNotNull(setting) && setting.getWithStranger();
     }
 
     @Override

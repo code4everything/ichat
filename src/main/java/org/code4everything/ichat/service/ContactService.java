@@ -11,6 +11,8 @@ import java.util.List;
  */
 public interface ContactService {
 
+    boolean shouldStrangerChat(String userId);
+
     List<Contact> list(String userId);
 
     void updateStatus(String userId, String friendId, String noteName, String status);
