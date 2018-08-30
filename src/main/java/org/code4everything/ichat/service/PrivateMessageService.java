@@ -10,6 +10,7 @@ import java.util.List;
  * @since 2018/8/29
  */
 public interface PrivateMessageService {
+
     PrivateMessage saveMessage(JSONObject jsonObject);
 
     List<PrivateMessage> listByUserId(Integer offset, String myId, String userId);

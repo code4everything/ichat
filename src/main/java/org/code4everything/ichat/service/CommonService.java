@@ -11,7 +11,9 @@ public interface CommonService {
 
     String uploadAvatar(String userId, MultipartFile avatar);
 
-    String saveDocument(String local, String url, MultipartFile avatar, String userId);
+    String saveDocument(MultipartFile file, String userId);
+
+    String saveDocument(String local, String url, MultipartFile file, String userId);
 
     boolean saveFile(String filename, MultipartFile file, String userId);
 

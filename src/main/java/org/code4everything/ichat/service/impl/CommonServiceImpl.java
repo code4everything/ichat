@@ -68,15 +68,32 @@ public class CommonServiceImpl implements CommonService {
             saveLog(LogLevel.ERROR, CLASS_NAME + "#uploadAvatar", msg, userId);
             return "内部错误：获取文件MD5码失败";
         }
-        String suffix = FileExecutor.getFileSuffix(Objects.requireNonNull(avatar.getOriginalFilename()));
-        String filename = md5 + ValueConsts.DOT_SIGN + suffix;
+        String filename = md5 + FileExecutor.getSuffix(avatar.getOriginalFilename());
         local += (local.endsWith(File.separator) ? "" : File.separator) + filename;
         String url = IchatValueConsts.AVATAR_MAPPING + filename;
         return saveDocument(local, url, avatar, userId);
     }
 
     @Override
-    public String saveDocument(String local, String url, MultipartFile avatar, String userId) {
+    public String saveDocument(MultipartFile file, String userId) {
+        String local = Checker.checkNull(getString(ConfigConsts.FILE_STORAGE_PATH),
+                DefaultConfigValueConsts.FILE_STORAGE_PATH);
+        String md5;
+        try {
+            md5 = Arrays.toString(JavaEncrypt.MD5.digest(file.getBytes()));
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            String msg = "get md5 from file error: " + e.getMessage();
+            saveLog(LogLevel.ERROR, CLASS_NAME + "#saveDocument", msg, userId);
+            md5 = "md5_error";
+        }
+        String filename = md5 + FileExecutor.getSuffix(Objects.requireNonNull(file.getOriginalFilename()));
+        local += (local.endsWith(File.separator) ? "" : File.separator) + filename;
+        return saveDocument(local, IchatValueConsts.FILE_MAPPING + filename, file, userId);
+    }
+
+    @Override
+    public String saveDocument(String local, String url, MultipartFile file, String userId) {
         Document document = documentDAO.findDocumentByLocal(local);
         // 已经存在该文件
         if (Checker.isNotNull(document)) {
@@ -87,13 +104,13 @@ public class CommonServiceImpl implements CommonService {
         if (Checker.isNotNull(document)) {
             return url;
         }
-        if (saveFile(local, avatar, userId)) {
+        if (saveFile(local, file, userId)) {
             document = new Document();
             document.setCreateTime(System.currentTimeMillis());
             document.setId(RandomUtil.simpleUUID());
             document.setLocal(local);
-            document.setSize(avatar.getSize());
-            document.setType(FileExecutor.getFileSuffix(avatar.getName()));
+            document.setSize(file.getSize());
+            document.setType(FileExecutor.getFileSuffix(file.getName()));
             document.setUrl(url);
             documentDAO.save(document);
             return url;

@@ -25,4 +25,6 @@ public class IchatValueConsts {
     public static final String FOUR_STR = "4";
 
     public static final String FIVE_STR = "5";
+
+    public static final String FILE_MAPPING = "/file/";
 }
