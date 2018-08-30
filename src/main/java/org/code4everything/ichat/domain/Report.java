@@ -3,6 +3,7 @@ package org.code4everything.ichat.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.code4everything.ichat.model.ReportDTO;
 import org.springframework.data.annotation.Id;
 
 /**
@@ -63,4 +64,11 @@ public class Report {
      * 创建时间
      */
     private Long createTime;
+
+    public Report(ReportDTO reportDTO) {
+        reportUserId = reportDTO.getReportUserId();
+        description = reportDTO.getDescription();
+        image = reportDTO.getImage();
+        reason = reportDTO.getReportUserId();
+    }
 }
