@@ -1,11 +1,14 @@
 package org.code4everything.ichat.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.encryption.JavaEncrypt;
 import org.apache.log4j.Logger;
 import org.code4everything.ichat.constant.IchatValueConsts;
 import org.code4everything.ichat.dao.UserDAO;
+import org.code4everything.ichat.dao.UserSettingDAO;
 import org.code4everything.ichat.domain.User;
+import org.code4everything.ichat.domain.UserSetting;
 import org.code4everything.ichat.model.BasicUserDTO;
 import org.code4everything.ichat.model.SimpleUserVO;
 import org.code4everything.ichat.service.CommonService;
@@ -39,11 +42,15 @@ public class UserServiceImpl implements UserService {
 
     private final CommonService commonService;
 
+    private final UserSettingDAO userSettingDAO;
+
     @Autowired
-    public UserServiceImpl(UserDAO userDAO, MongoTemplate mongoTemplate, CommonService commonService) {
+    public UserServiceImpl(UserDAO userDAO, MongoTemplate mongoTemplate, CommonService commonService,
+                           UserSettingDAO userSettingDAO) {
         this.userDAO = userDAO;
         this.mongoTemplate = mongoTemplate;
         this.commonService = commonService;
+        this.userSettingDAO = userSettingDAO;
     }
 
     @Override
@@ -116,6 +123,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(User user) {
         userDAO.save(user);
+        Long timestamp = System.currentTimeMillis();
+        // 默认设置
+        UserSetting userSetting = new UserSetting();
+        userSetting.setId(RandomUtil.simpleUUID());
+        userSetting.setInvitation("2");
+        userSetting.setIsAddable(true);
+        userSetting.setIsAgeVisible(true);
+        userSetting.setIsEmailVisible(true);
+        userSetting.setIsGenderVisible(true);
+        userSetting.setIsPhoneVisible(false);
+        userSetting.setUpdateTime(timestamp);
+        userSetting.setIsVisible(true);
+        userSetting.setUserId(user.getId());
+        userSetting.setWithStranger(true);
+        userSettingDAO.save(userSetting);
     }
 
     @Override
