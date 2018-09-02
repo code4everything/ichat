@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ReportController {
 
     private final HttpServletRequest request;
-    
+
     private final ReportService reportService;
 
     @Autowired
@@ -45,5 +45,12 @@ public class ReportController {
             result.resultObject = new ResultObject(reportService.save(userId, report));
         }
         return result.resultObject;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @ApiOperation("获取我的投诉记录")
+    public ResultObject list() {
+        String userId = request.getSession().getAttribute(IchatValueConsts.ID_STR).toString();
+        return new ResultObject(userId);
     }
 }

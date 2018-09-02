@@ -9,6 +9,8 @@ import org.code4everything.ichat.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author pantao
  * @since 2018/8/30
@@ -24,6 +26,11 @@ public class ReportServiceImpl implements ReportService {
     public ReportServiceImpl(ReportDAO reportDAO, CommonService commonService) {
         this.reportDAO = reportDAO;
         this.commonService = commonService;
+    }
+
+    @Override
+    public List<Report> list(String userId) {
+        return reportDAO.getByUserId(userId);
     }
 
     @Override
